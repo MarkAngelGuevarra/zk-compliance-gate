@@ -1,0 +1,52 @@
+{
+  "name": "zk-compliance-gate",
+  "version": "1.0.0",
+  "description": "A zero-knowledge age & eligibility compliance gate built on Midnight Network using Compact smart contracts. Proves eligibility without revealing private data.",
+  "private": true,
+  "scripts": {
+    "compile": "compact compile contracts/gate.compact --output managed/",
+    "test": "jest --coverage",
+    "test:watch": "jest --watch",
+    "deploy:preview": "node src/deploy.js --network preview",
+    "deploy:preprod": "node src/deploy.js --network preprod",
+    "lint": "eslint src/ tests/",
+    "format": "prettier --write ."
+  },
+  "keywords": [
+    "midnight",
+    "compact",
+    "zero-knowledge",
+    "zk",
+    "privacy",
+    "blockchain",
+    "eligibility",
+    "compliance"
+  ],
+  "author": "",
+  "license": "MIT",
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "dependencies": {
+    "@midnight-ntwrk/compact-runtime": "^0.14.0",
+    "@midnight-ntwrk/dapp-connector-api": "^0.14.0",
+    "@midnight-ntwrk/midnight-js-contracts": "^0.14.0",
+    "@midnight-ntwrk/midnight-js-network-id": "^0.14.0",
+    "@midnight-ntwrk/midnight-js-types": "^0.14.0"
+  },
+  "devDependencies": {
+    "jest": "^29.0.0",
+    "eslint": "^8.0.0",
+    "prettier": "^3.0.0",
+    "@types/jest": "^29.0.0"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "testMatch": [
+      "**/tests/**/*.test.js"
+    ],
+    "collectCoverageFrom": [
+      "src/**/*.js"
+    ]
+  }
+}
