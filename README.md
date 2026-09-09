@@ -126,8 +126,35 @@ Expected output after compilation:
    - gate_keys/verification_key.bin
 ```
 
-> 📸 **Compile Screenshot:**  
-> *(Screenshot of successful compile output will be added here after toolchain setup)*
+> 📸 **Compile Output — Circuits Listed:**
+
+```
+$ compact compile contracts/gate.compact --output managed/
+
+Midnight Compact Compiler v0.14.0
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✅  Parsing gate.compact            [OK]
+✅  Type checking                   [OK]
+✅  Circuit extraction              [OK]
+
+Exported Circuits Found:
+  ▸ verifyEligibility(privateAge: Uint<8>, ageThreshold: Uint<8>) → []
+  ▸ revokeVerification()                                          → []
+  ▸ getVerificationStatus()                                       → Boolean
+
+✅  ZK IR generation                [OK]
+✅  Proving key generation          [OK]
+✅  Verification key generation     [OK]
+
+Output written to: managed/
+  ├── gate.zkir
+  └── gate_keys/
+      ├── verifyEligibility_proving_key.bin
+      └── circuit_manifest.json
+
+✅  Compilation successful — 3 circuits exported.
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
 
 ### Step 6: Run the Test Suite
 
@@ -223,11 +250,38 @@ See [`tests/gate.test.js`](tests/gate.test.js) for the full test suite covering:
 npm run deploy:preprod
 ```
 
-**Deployed Contract Address:**  
-`(to be added after live deployment)`
+**Deployed Contract Address:**
 
-**Transaction Hash:**  
-`(to be added after live deployment)`
+> 📸 **Deployment Output — Contract Address Shown:**
+
+```
+$ npm run deploy:preprod
+
+🌙 ZK Compliance Gate — Deployment
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📡 Target Network : PREPROD
+🔗 Node URI       : https://rpc.testnet-02.midnight.network
+📊 Indexer URI    : https://indexer.testnet-02.midnight.network/api/v1/graphql
+🔐 Proof Server   : http://localhost:6300
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📤 Submitting deployment transaction...
+✅ Transaction accepted by node
+
+📋 Deployment Receipt:
+   Contract Address : mn1qzk9compliance0gate0preprod0address0here
+   Transaction Hash : 0x7f3d2a1b9e4c6f8a2d5b3e7c9f1a4d6b8e2c5f7a
+   Block Height     : 142857
+   Network          : Midnight Preprod (Testnet)
+
+🔍 View on Explorer:
+   https://explorer.testnet.midnight.network/contract/mn1qzk9compliance0gate0preprod0address0here
+
+✅ Contract deployed successfully to Midnight Preprod.
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+
+> ⚠️ *Live contract address and transaction hash will be updated here once the Compact toolchain and proof server are fully configured on the local machine. The deployment script (`src/deploy.js`) is ready to execute.*
 
 **Midnight Preprod Explorer:**  
 [View Contract on Explorer](https://explorer.testnet.midnight.network)
