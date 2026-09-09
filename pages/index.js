@@ -11,10 +11,11 @@
 
 import { useState } from 'react';
 import Head from 'next/head';
-import WalletConnect from '../src/components/WalletConnect';
-import EligibilityForm from '../src/components/EligibilityForm';
-import ResultCard from '../src/components/ResultCard';
-import LedgerState from '../src/components/LedgerState';
+import WalletConnect from '../components/WalletConnect';
+import EligibilityForm from '../components/EligibilityForm';
+import ResultCard from '../components/ResultCard';
+import LedgerState from '../components/LedgerState';
+
 
 export default function Home() {
   const [wallet, setWallet] = useState(null);
