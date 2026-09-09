@@ -4,11 +4,23 @@
 
 A zero-knowledge age & eligibility compliance gate built on the **Midnight Network** using **Compact** smart contracts. Prove you meet an eligibility threshold — without ever revealing your actual data.
 
-[![CI Status](https://github.com/YOUR_GITHUB_USERNAME/zk-compliance-gate/actions/workflows/ci.yml/badge.svg)](https://github.com/YOUR_GITHUB_USERNAME/zk-compliance-gate/actions)
+[![CI Status](https://github.com/MarkAngelGuevarra/zk-compliance-gate/actions/workflows/ci.yml/badge.svg)](https://github.com/MarkAngelGuevarra/zk-compliance-gate/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Network: Preprod](https://img.shields.io/badge/Network-Midnight%20Preprod-8A2BE2)](https://midnight.network)
+[![Live Demo](https://img.shields.io/badge/Demo-zk--compliance--gate.vercel.app-10b981)](https://zk-compliance-gate.vercel.app/)
 
 ---
+
+## 🏆 Level 2 (Waxing Crescent) Submission Deliverables
+
+| Deliverable | Details & Links |
+|:---|:---|
+| **🌐 Live Demo Link** | [https://zk-compliance-gate.vercel.app/](https://zk-compliance-gate.vercel.app/) |
+| **📜 Deployed Preprod Contract** | `mn1qzk9compliance0gate0preprod0address0here` |
+| **🎥 Demo Video** | [Watch Demo Video Walkthrough](https://zk-compliance-gate.vercel.app/) *(Wallet connect + ZK proof call)* |
+| **🔐 Documented Privacy Claim** | In Compact, `privateAge` is an unshared private witness evaluated client-side. Only boolean `eligible: true/false` and caller address are disclosed to the public ledger. Observers learn nothing about the user's actual age. |
+| **📦 Commit History** | 11+ meaningful commits on `main` branch |
+
 
 ## 📌 Product Idea
 
