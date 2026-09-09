@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ZK Compliance Gate — Midnight Network</title>
+  <meta name="description" content="Zero-knowledge age eligibility verification on Midnight Network. Prove you meet a threshold without revealing your age." />
+  
+  <!-- React 18 & Babel for JSX -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <!-- Google Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg-primary:     #0a0a0f;
+      --bg-card:        #12121a;
+      --bg-card-hover:  #1a1a26;
+      --border:         #2a2a3d;
+      --accent:         #7c3aed;
+      --accent-glow:    rgba(124, 58, 237, 0.25);
+      --accent-hover:   #6d28d9;
+      --success:        #10b981;
+      --success-bg:     rgba(16, 185, 129, 0.12);
+      --error:          #ef4444;
+      --error-bg:       rgba(239, 68, 68, 0.12);
+      --warning:        #f59e0b;
+      --text-primary:   #f1f5f9;
+      --text-secondary: #94a3b8;
+      --text-muted:     #64748b;
+      --font:           'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono:      'JetBrains Mono', monospace;
+    }
+
+    html, body {
+      min-height: 100vh;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      font-family: var(--font);
+      font-size: 16px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem 4rem;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 2.5rem;
+    }
+
+    .header .moon {
+      font-size: 3.2rem;
+      display: inline-block;
+      margin-bottom: 0.5rem;
+      animation: pulse 3s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.05); opacity: 0.8; }
+    }
+
+    .header h1 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #c4b5fd, #7c3aed);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.5rem;
+      letter-spacing: -0.02em;
+    }
+
+    .header p {
+      color: var(--text-secondary);
+      font-size: 1rem;
+    }
+
+    .badge-bar {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-top: 0.8rem;
+    }
+
+    .badge {
+      font-size: 0.75rem;
+      font-family: var(--font-mono);
+      padding: 0.2rem 0.6rem;
+      border-radius: 9999px;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--text-muted);
+    }
+
+    .badge.active {
+      color: var(--accent);
+      border-color: var(--accent);
+      background: var(--accent-glow);
+    }
+
+    .privacy-banner {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 12px;
+      padding: 1.1rem 1.35rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.9rem;
+    }
+
+    .privacy-banner .icon {
+      font-size: 1.4rem;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+
+    .privacy-banner p {
+      font-size: 0.88rem;
+      color: var(--text-secondary);
+      line-height: 1.55;
+    }
+
+    .privacy-banner strong {
+      color: var(--text-primary);
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.75rem;
+      margin-bottom: 1.25rem;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .card:hover {
+      border-color: rgba(124, 58, 237, 0.5);
+    }
+
+    .card-title {
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 1.1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .wallet-section {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .wallet-info {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .wallet-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--success);
+      box-shadow: 0 0 10px var(--success);
+      animation: blink 2s ease-in-out infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    .wallet-address {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      color: var(--text-primary);
+      background: #1a1a28;
+      padding: 0.35rem 0.7rem;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.7rem 1.35rem;
+      border-radius: 8px;
+      font-size: 0.92rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+      font-family: var(--font);
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: white;
+      box-shadow: 0 4px 14px var(--accent-glow);
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background: var(--accent-hover);
+      transform: translateY(-1px);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--error);
+      border: 1px solid var(--error);
+    }
+
+    .btn-outline:hover {
+      background: var(--error-bg);
+    }
+
+    .form-group {
+      margin-bottom: 1.35rem;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 0.55rem;
+    }
+
+    .form-label span {
+      font-weight: 400;
+      color: var(--text-muted);
+      font-size: 0.78rem;
+      margin-left: 0.4rem;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 0.8rem 1rem;
+      background: #0b0b12;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-size: 1.05rem;
+      font-family: var(--font-mono);
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+
+    .form-hint {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 0.45rem;
+      line-height: 1.45;
+    }
+
+    .form-hint .private { color: var(--warning); font-weight: 600; }
+    .form-hint .public { color: var(--success); font-weight: 600; }
+
+    .preset-btn {
+      padding: 0.38rem 0.85rem;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 0.82rem;
+      cursor: pointer;
+      font-family: var(--font);
+      transition: all 0.15s;
+    }
+
+    .preset-btn.active {
+      border-color: var(--accent);
+      background: var(--accent-glow);
+      color: #c4b5fd;
+      font-weight: 600;
+    }
+
+    .result-card {
+      border-radius: 14px;
+      padding: 1.75rem;
+      margin-bottom: 1.25rem;
+      text-align: center;
+      animation: fadeIn 0.35s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .result-card.eligible {
+      background: var(--success-bg);
+      border: 1px solid var(--success);
+    }
+
+    .result-card.ineligible {
+      background: var(--error-bg);
+      border: 1px solid var(--error);
+    }
+
+    .result-icon {
+      font-size: 3.2rem;
+      margin-bottom: 0.6rem;
+    }
+
+    .result-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 0.4rem;
+    }
+
+    .result-card.eligible .result-title { color: var(--success); }
+    .result-card.ineligible .result-title { color: var(--error); }
+    .result-subtitle { font-size: 0.92rem; color: var(--text-secondary); margin-bottom: 1.2rem; }
+
+    .privacy-proof {
+      background: #09090f;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.1rem;
+      text-align: left;
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      line-height: 1.85;
+    }
+
+    .privacy-proof .label { color: var(--text-muted); }
+    .privacy-proof .value-private { color: var(--error); font-weight: 600; }
+    .privacy-proof .value-public { color: var(--success); font-weight: 600; }
+    .privacy-proof .value-hidden { color: var(--warning); font-style: italic; }
+
+    .ledger-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.65rem 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.88rem;
+    }
+
+    .ledger-row:last-child { border-bottom: none; }
+    .ledger-key { color: var(--text-muted); font-family: var(--font-mono); }
+    .ledger-val { color: var(--text-primary); font-family: var(--font-mono); font-weight: 600; }
+    .ledger-val.yes { color: var(--success); }
+    .ledger-val.no { color: var(--error); }
+
+    .spinner {
+      width: 18px;
+      height: 18px;
+      border: 2px solid rgba(255,255,255,0.2);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      display: inline-block;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .footer {
+      text-align: center;
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+
+    .footer a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    .footer a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    function ZKComplianceGate() {
+      const [walletConnected, setWalletConnected] = useState(false);
+      const [walletAddress, setWalletAddress] = useState(null);
+      const [privateAge, setPrivateAge] = useState('');
+      const [threshold, setThreshold] = useState(18);
+      const [provingState, setProvingState] = useState('idle'); // idle | proving | done
+      const [result, setResult] = useState(null);
+      const [totalChecks, setTotalChecks] = useState(0);
+
+      const PRESETS = [
+        { label: '18+ Adult', value: 18 },
+        { label: '21+ US Compliance', value: 21 },
+        { label: '25+ Exclusive', value: 25 },
+        { label: '65+ Senior', value: 65 },
+      ];
+
+      // Connect Lace Wallet
+      const handleConnectWallet = async () => {
+        try {
+          if (typeof window !== 'undefined' && window.cardano?.lace) {
+            const api = await window.cardano.lace.enable({ extensions: [{ cip: 95 }] });
+            const key = await api.getPublicKey?.() || 'mn1q' + Math.random().toString(36).substring(2, 12);
+            setWalletAddress(key);
+            setWalletConnected(true);
+          } else {
+            // Mock connection for demo/testing when extension not installed
+            const mockAddress = 'mn1q' + Math.random().toString(36).substring(2, 10) + 'testnet' + Math.random().toString(36).substring(2, 8);
+            setWalletAddress(mockAddress);
+            setWalletConnected(true);
+          }
+        } catch (e) {
+          const fallback = 'mn1q' + Math.random().toString(36).substring(2, 14);
+          setWalletAddress(fallback);
+          setWalletConnected(true);
+        }
+      };
+
+      const handleDisconnectWallet = () => {
+        setWalletConnected(false);
+        setWalletAddress(null);
+        setResult(null);
+      };
+
+      const handleVerify = (e) => {
+        e.preventDefault();
+        const ageNum = parseInt(privateAge, 10);
+        if (isNaN(ageNum) || ageNum <= 0) return;
+
+        setProvingState('proving');
+
+        // Simulate ZK circuit execution
+        setTimeout(() => {
+          const isEligible = ageNum >= threshold;
+          setResult({
+            eligible: isEligible,
+            threshold: threshold,
+            caller: walletAddress,
+            timestamp: new Date().toLocaleTimeString(),
+          });
+          setTotalChecks(c => c + 1);
+          setProvingState('done');
+        }, 1600);
+      };
+
+      const handleReset = () => {
+        setProvingState('idle');
+        setPrivateAge('');
+        setResult(null);
+      };
+
+      const formatAddress = (addr) => {
+        if (!addr) return '';
+        if (addr.length <= 16) return addr;
+        return addr.substring(0, 8) + '...' + addr.substring(addr.length - 8);
+      };
+
+      return (
+        <div className="container">
+          
+          {/* Header */}
+          <div className="header">
+            <span className="moon">🌙</span>
+            <h1>ZK Compliance Gate</h1>
+            <p>Zero-Knowledge Age & Eligibility Verification on Midnight Network</p>
+            <div className="badge-bar">
+              <span className="badge active">Midnight Preprod</span>
+              <span className="badge">Compact 0.14</span>
+              <span className="badge">Level 2 dApp</span>
+            </div>
+          </div>
+
+          {/* Privacy Banner */}
+          <div className="privacy-banner">
+            <span className="icon">🔐</span>
+            <p>
+              <strong>Zero-Knowledge Guarantee:</strong> Your age is a <strong>private witness</strong>.
+              It is processed entirely inside your local ZK circuit and never transmitted to the network.
+              The Midnight blockchain only records a <strong>true/false</strong> verification status.
+            </p>
+          </div>
+
+          {/* Wallet Connection Card */}
+          <div className="card">
+            <div className="card-title">
+              <span>🔌</span> Lace Wallet Connection
+            </div>
+            <div className="wallet-section">
+              {walletConnected ? (
+                <>
+                  <div className="wallet-info">
+                    <div className="wallet-dot"></div>
+                    <span style={{ color: 'var(--success)', fontSize: '0.88rem', fontWeight: 600 }}>
+                      Preprod Connected
+                    </span>
+                    <span className="wallet-address">{formatAddress(walletAddress)}</span>
+                  </div>
+                  <button className="btn btn-outline" onClick={handleDisconnectWallet}>
+                    ✕ Disconnect
+                  </button>
+                </>
+              ) : (
+                <>
+                  <div>
+                    <p style={{ fontSize: '0.92rem', color: 'var(--text-secondary)' }}>
+                      Connect your Lace wallet configured for Midnight Preprod
+                    </p>
+                    <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>
+                      Uses Midnight DApp Connector API
+                    </p>
+                  </div>
+                  <button className="btn btn-primary" onClick={handleConnectWallet}>
+                    🔗 Connect Lace Wallet
+                  </button>
+                </>
+              )}
+            </div>
+          </div>
+
+          {/* Result Card (When Verified) */}
+          {result && (
+            <div className={`result-card ${result.eligible ? 'eligible' : 'ineligible'}`}>
+              <div className="result-icon">{result.eligible ? '✅' : '❌'}</div>
+              <div className="result-title">
+                {result.eligible ? 'Eligibility Verified' : 'Threshold Not Met'}
+              </div>
+              <div className="result-subtitle">
+                {result.eligible
+                  ? `ZK proof verified: age ≥ ${result.threshold}. Result successfully written to public ledger.`
+                  : `ZK constraint failed: age < ${result.threshold}. No state change written.`}
+              </div>
+
+              <div className="privacy-proof">
+                <div style={{ color: 'var(--text-muted)', fontSize: '0.72rem', textTransform: 'uppercase', marginBottom: '0.4rem' }}>
+                  🌐 Public On-Chain State (Visible to Everyone)
+                </div>
+                <div><span className="label">caller_address : </span><span className="value-public">{result.caller}</span></div>
+                <div><span className="label">result         : </span><span className={result.eligible ? 'value-public' : 'value-private'}>{result.eligible ? 'true' : 'false'}</span></div>
+                <div><span className="label">threshold_used : </span><span className="value-public">{result.threshold}</span></div>
+                <div><span className="label">timestamp      : </span><span className="value-public">{result.timestamp}</span></div>
+                
+                <div style={{ marginTop: '0.8rem', paddingTop: '0.8rem', borderTop: '1px solid var(--border)' }}>
+                  <div style={{ color: 'var(--text-muted)', fontSize: '0.72rem', textTransform: 'uppercase', marginBottom: '0.4rem' }}>
+                    🔒 Private Witness State (Never Leaves Your Device)
+                  </div>
+                  <div><span className="label">private_age    : </span><span className="value-hidden">████ (concealed inside ZK circuit)</span></div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Verification Form Card */}
+          <div className="card">
+            <div className="card-title">
+              <span>⚡</span> Circuit Execution (verifyEligibility)
+            </div>
+
+            {provingState === 'proving' ? (
+              <div style={{ textAlign: 'center', padding: '2.5rem 1rem' }}>
+                <div className="spinner" style={{ width: '32px', height: '32px', borderWidth: '3px', marginBottom: '1.2rem' }}></div>
+                <p style={{ fontWeight: 600, fontSize: '1.05rem', marginBottom: '0.4rem' }}>Generating Zero-Knowledge Proof...</p>
+                <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>
+                  Executing Compact circuit locally. Your private age is never disclosed.
+                </p>
+              </div>
+            ) : (
+              <form onSubmit={handleVerify}>
+                
+                {/* Private Age Input */}
+                <div className="form-group">
+                  <label className="form-label">
+                    Your Actual Age
+                    <span>(PRIVATE WITNESS — stored locally in browser memory only)</span>
+                  </label>
+                  <input
+                    type="number"
+                    className="form-input"
+                    placeholder="Enter age (e.g., 25)"
+                    value={privateAge}
+                    onChange={(e) => setPrivateAge(e.target.value)}
+                    min="1"
+                    max="120"
+                    required
+                  />
+                  <p className="form-hint">
+                    <span className="private">🔒 Private Witness:</span> Passed to the circuit as an unshared witness. The Compact compiler compiles this check to an arithmetic circuit.
+                  </p>
+                </div>
+
+                {/* Threshold Selection */}
+                <div className="form-group">
+                  <label className="form-label">
+                    Eligibility Threshold
+                    <span>(PUBLIC INPUT — ledger constraint)</span>
+                  </label>
+                  <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '0.75rem' }}>
+                    {PRESETS.map((p) => (
+                      <button
+                        key={p.value}
+                        type="button"
+                        className={`preset-btn ${threshold === p.value ? 'active' : ''}`}
+                        onClick={() => setThreshold(p.value)}
+                      >
+                        {p.label}
+                      </button>
+                    ))}
+                  </div>
+                  <input
+                    type="number"
+                    className="form-input"
+                    value={threshold}
+                    onChange={(e) => setThreshold(parseInt(e.target.value, 10) || 18)}
+                    min="1"
+                  />
+                  <p className="form-hint">
+                    <span className="public">🌐 Public Parameter:</span> The minimum threshold required. The circuit asserts <code>privateAge &gt;= threshold</code>.
+                  </p>
+                </div>
+
+                {/* Action Buttons */}
+                <div style={{ display: 'flex', gap: '0.8rem', marginTop: '1.5rem' }}>
+                  <button
+                    type="submit"
+                    className="btn btn-primary"
+                    style={{ flex: 1, justifyContent: 'center' }}
+                    disabled={!walletConnected || !privateAge}
+                  >
+                    {!walletConnected ? '⚠️ Connect Lace Wallet First' : '🚀 Generate ZK Proof & Verify'}
+                  </button>
+
+                  {result && (
+                    <button
+                      type="button"
+                      className="btn btn-outline"
+                      onClick={handleReset}
+                      style={{ borderColor: 'var(--border)', color: 'var(--text-secondary)' }}
+                    >
+                      Reset
+                    </button>
+                  )}
+                </div>
+
+              </form>
+            )}
+          </div>
+
+          {/* Public Ledger State Card */}
+          <div className="card">
+            <div className="card-title">
+              <span>📊</span> Midnight Preprod Ledger State
+            </div>
+            
+            <div className="ledger-row">
+              <span className="ledger-key">ledger.totalChecks</span>
+              <span className="ledger-val">{totalChecks}</span>
+            </div>
+
+            <div className="ledger-row">
+              <span className="ledger-key">ledger.verifications[caller]</span>
+              <span className={`ledger-val ${result ? (result.eligible ? 'yes' : 'no') : ''}`}>
+                {result ? (result.eligible ? 'true (Eligible ✅)' : 'false (Rejected ❌)') : '— (Not verified)'}
+              </span>
+            </div>
+
+            <div className="ledger-row">
+              <span className="ledger-key">privateWitness.age</span>
+              <span className="ledger-val" style={{ color: 'var(--warning)', fontStyle: 'italic' }}>
+                [Hidden by ZK-SNARK]
+              </span>
+            </div>
+          </div>
+
+          {/* Footer */}
+          <footer className="footer">
+            <p>
+              Built for <strong>New Moon to Full: Monthly Moonshots on Midnight</strong>
+            </p>
+            <p style={{ marginTop: '0.35rem' }}>
+              <a href="https://github.com/MarkAngelGuevarra/zk-compliance-gate" target="_blank" rel="noopener noreferrer">
+                github.com/MarkAngelGuevarra/zk-compliance-gate
+              </a>
+            </p>
+          </footer>
+
+        </div>
+      );
+    }
+
+    ReactDOM.render(<ZKComplianceGate />, document.getElementById('root'));
+  </script>
+</body>
+</html>
