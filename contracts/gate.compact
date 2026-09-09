@@ -1,0 +1,70 @@
+// ============================================================
+// zk-compliance-gate — Level 1: New Moon
+// ZK Age & Eligibility Compliance Gate on Midnight Network
+//
+// Privacy Model:
+//   - Private witness: the user's actual age (never leaves the prover)
+//   - Public ledger:   only the boolean result (eligible: true/false)
+//
+// This contract proves that a user meets an age threshold
+// WITHOUT disclosing their exact age. The ZK circuit verifies
+// the claim inside the enclave; only the outcome is published.
+// ============================================================
+
+pragma language_version >= 0.14.0;
+
+import CompactStandardLibrary;
+
+// ── Public Ledger State ───────────────────────────────────────
+// Everything in `ledger` is visible on-chain to anyone.
+// We deliberately expose ONLY the outcome, never the private input.
+ledger {
+  // Total number of eligibility checks performed (public counter)
+  totalChecks: Counter;
+
+  // Maps each verifier address to their last verification result
+  // true  = eligible (passed the threshold)
+  // false = not eligible
+  verifications: Map<ZswapCoinPublicKey, Boolean>;
+}
+
+// ── Circuit: verifyEligibility ────────────────────────────────
+// This is the ZK circuit exported to the blockchain.
+//
+// Parameters:
+//   privateAge     — the user's real age (PRIVATE witness, never disclosed)
+//   ageThreshold   — the minimum age required (PUBLIC, sent by the dApp)
+//
+// The circuit:
+//   1. Proves privateAge >= ageThreshold inside the ZK enclave
+//   2. Writes ONLY true/false to the public ledger
+//   3. Never exposes privateAge on-chain
+export circuit verifyEligibility(
+  privateAge: Uint<8>,         // PRIVATE: user's real age (0–255)
+  ageThreshold: Uint<8>        // PUBLIC:  threshold (e.g., 18)
+): [] {
+  // ZK constraint: assert the private age meets the threshold
+  // If this fails, the proof is rejected — no state change occurs
+  assert privateAge >= ageThreshold : "Age does not meet the required threshold";
+
+  // Increment the global check counter (public, visible on chain)
+  increment_counter(ledger.totalChecks);
+
+  // Record the caller's eligibility result on the public ledger
+  // disclose() marks this value as safe to write to public state
+  ledger.verifications.insert(own_public_key(), disclose(true));
+}
+
+// ── Circuit: revokeVerification ───────────────────────────────
+// Allows a previously verified user to remove their record.
+// Useful for privacy-conscious users who want to clean their state.
+export circuit revokeVerification(): [] {
+  ledger.verifications.insert(own_public_key(), disclose(false));
+}
+
+// ── Circuit: getVerificationStatus ───────────────────────────
+// Read-only view: returns the caller's current eligibility status.
+// Returns false if the caller has never been verified.
+export circuit getVerificationStatus(): Boolean {
+  return ledger.verifications.lookup(own_public_key()).value_or(false);
+}
