@@ -2,7 +2,7 @@
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
-  // Explicitly point Next.js to root-level pages/ directory
+  // Standard Next.js configuration using src/ directory layout
   pageExtensions: ['js', 'jsx', 'ts', 'tsx'],
 };
 

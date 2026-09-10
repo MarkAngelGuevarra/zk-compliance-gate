@@ -66,9 +66,21 @@ zk-compliance-gate/
 ├── contracts/
 │   └── gate.compact          # Compact ZK smart contract (core logic)
 ├── src/
+│   ├── components/           # Modular React components
+│   │   ├── EligibilityForm.jsx # Core ZK verification form
+│   │   ├── LedgerState.jsx   # On-chain public state viewer
+│   │   ├── ResultCard.jsx    # Privacy receipt & proof display
+│   │   └── WalletConnect.jsx # Lace CIP-95 wallet connector
+│   ├── pages/                # Next.js application routes
+│   │   ├── _app.js           # App entry & global styling
+│   │   └── index.js          # Master compliance gate view
+│   ├── styles/               # Styling & design system
+│   │   └── globals.css       # Midnight dark-theme CSS
 │   └── deploy.js             # Deployment script for Preview/Preprod
+├── public/
+│   └── standalone.html       # Standalone zero-build dApp bundle
 ├── tests/
-│   └── gate.test.js          # Full unit test suite (10 tests)
+│   └── gate.test.js          # Full unit test suite (11 tests)
 ├── docs/
 │   ├── DEPLOYMENT.md         # Step-by-step deployment guide
 │   └── USER_GUIDE.md         # End-to-end user & tester guide
@@ -79,7 +91,9 @@ zk-compliance-gate/
 │   └── workflows/
 │       └── ci.yml            # GitHub Actions CI/CD pipeline
 ├── .gitignore
+├── next.config.js
 ├── package.json
+├── package-lock.json
 └── README.md
 ```
 
