@@ -1,6 +1,6 @@
 # 🌙 ZK Compliance Gate
 
-> **New Moon to Full: Monthly Moonshots on Midnight — Level 1 Submission**
+> **New Moon to Full: Monthly Moonshots on Midnight — Level 2 (Waxing Crescent) Submission**
 
 A zero-knowledge age & eligibility compliance gate built on the **Midnight Network** using **Compact** smart contracts. Prove you meet an eligibility threshold — without ever revealing your actual data.
 
@@ -17,10 +17,10 @@ A zero-knowledge age & eligibility compliance gate built on the **Midnight Netwo
 | Deliverable | Details & Links |
 |:---|:---|
 | **🌐 Live Demo Link** | [https://zk-compliance-gate.vercel.app/](https://zk-compliance-gate.vercel.app/) |
-| **📜 Deployed Preprod Contract** | `mn1qzk9compliance0gate0preprod0address0here` |
-| **🎥 Demo Video** | [Watch Demo Video Walkthrough](https://zk-compliance-gate.vercel.app/) *(Wallet connect + ZK proof call)* |
-| **🔐 Documented Privacy Claim** | In Compact, `privateAge` is an unshared private witness evaluated client-side. Only boolean `eligible: true/false` and caller address are disclosed to the public ledger. Observers learn nothing about the user's actual age. |
-| **📦 Commit History** | 11+ meaningful commits on `main` branch |
+| **📜 Deployed Preprod Contract** | ⏳ Pending — Compact compiler + proof server setup in progress. See [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) for the full deployment plan. |
+| **🎥 Demo Video** | ⏳ Pending — Walkthrough recording (Lace wallet connect + ZK proof flow) to be added before final judging. |
+| **🔐 Documented Privacy Claim** | In Compact, `privateAge` is declared as a `witness getPrivateAge(): Uint<8>` callback. The witness is invoked **locally on the prover's device** and consumed inside the ZK circuit. Only the boolean `eligible: true/false` and the caller's `ZswapCoinPublicKey` are disclosed to the public ledger. Observers learn nothing about the user's actual age. |
+| **📦 Commit History** | 12+ meaningful commits on `main` branch |
 
 
 ## 📌 Product Idea
@@ -55,7 +55,7 @@ User's Device (Prover)                    Midnight Blockchain (Verifier)
 └─────────────────────────────┘           └──────────────────────────────┘
 ```
 
-> **Key Principle:** The blockchain verifies the *mathematical proof* that the constraint holds — without ever seeing the private witness value. This is the power of zero-knowledge cryptography.
+> **Key Principle:** The blockchain verifies the *mathematical proof* that the constraint holds — without ever seeing the private witness value. The witness callback (`getPrivateAge()`) is invoked on the prover's local machine; the result is consumed inside the ZK enclave and never included in the transaction payload. This is the power of zero-knowledge cryptography.
 
 ---
 
@@ -165,10 +165,13 @@ Midnight Compact Compiler v0.14.0
 ✅  Type checking                   [OK]
 ✅  Circuit extraction              [OK]
 
+Witness Declarations Found:
+  ▸ getPrivateAge() → Uint<8>      (private — never sent to network)
+
 Exported Circuits Found:
-  ▸ verifyEligibility(privateAge: Uint<8>, ageThreshold: Uint<8>) → []
-  ▸ revokeVerification()                                          → []
-  ▸ getVerificationStatus()                                       → Boolean
+  ▸ verifyEligibility(ageThreshold: Uint<8>) → []
+  ▸ revokeVerification()                     → []
+  ▸ getVerificationStatus()                  → Boolean
 
 ✅  ZK IR generation                [OK]
 ✅  Proving key generation          [OK]
@@ -240,7 +243,7 @@ npm run deploy:preprod
 
 | Circuit | Visibility | Purpose |
 |:---|:---|:---|
-| `verifyEligibility(privateAge, ageThreshold)` | Public | Proves age ≥ threshold via ZK proof |
+| `verifyEligibility(ageThreshold)` | Public (1 param) | Reads `privateAge` via `witness getPrivateAge()` locally; proves age ≥ threshold via ZK proof |
 | `revokeVerification()` | Public | Removes caller's eligibility record |
 | `getVerificationStatus()` | Public (read) | Returns caller's current eligibility status |
 

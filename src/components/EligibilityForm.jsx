@@ -2,11 +2,16 @@
  * EligibilityForm.jsx
  * The core ZK eligibility check form.
  *
- * Privacy Guarantee (demonstrated to judges):
- *   - privateAge is entered by the user and NEVER sent to any server
- *   - ONLY the boolean result (eligible: true/false) is shown publicly
- *   - The ZK circuit proves the claim without disclosing the private input
- *   - An observer watching the blockchain sees ONLY: address → true/false
+ * Contract architecture (Compact witness pattern):
+ *   - The user enters `privateAge` into this form — it NEVER leaves the browser
+ *   - In production: `privateAge` is supplied to the circuit via the
+ *     `witness getPrivateAge(): Uint<8>` callback in the TypeScript SDK layer
+ *   - The exported circuit only receives `ageThreshold` as a public parameter
+ *   - ONLY the boolean result (eligible: true/false) is written to the ledger
+ *
+ * Current status: ZK proof is SIMULATED (pending Compact toolchain + proof server)
+ * The eligibility logic mirrors the `assert privateAge >= ageThreshold` constraint
+ * from gate.compact exactly, so the pass/fail behavior is correct.
  */
 
 import { useState } from 'react';
@@ -85,6 +90,22 @@ export default function EligibilityForm({ walletPublicKey, onResult }) {
   return (
     <div className="card">
       <p className="card-title">🔐 Eligibility Verification</p>
+
+      {/* ── Toolchain Status Banner ───────────────── */}
+      <div style={{
+        marginBottom: '1rem',
+        padding: '0.6rem 0.85rem',
+        background: 'rgba(245, 158, 11, 0.08)',
+        border: '1px solid rgba(245, 158, 11, 0.3)',
+        borderRadius: '8px',
+        fontSize: '0.78rem',
+        color: 'var(--warning)',
+      }}>
+        <strong>⏳ Simulated ZK Proof —</strong>{' '}
+        The Compact compiler + Midnight proof server are not yet connected.
+        The eligibility logic mirrors the on-chain <code>gate.compact</code> constraint exactly.
+        A real ZK proof via the Midnight SDK will be wired in during toolchain setup.
+      </div>
 
       {status === 'idle' || status === 'error' ? (
         <form onSubmit={handleSubmit}>

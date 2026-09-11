@@ -2,6 +2,12 @@
  * ZK Compliance Gate — Contract Logic Tests
  * Level 1: Verifies the core contract behavior and ZK circuit constraints.
  *
+ * Contract architecture note:
+ *   `privateAge` is supplied via `witness getPrivateAge(): Uint<8>` —
+ *   a callback implemented by the dApp TypeScript layer. In these
+ *   unit tests the witness is simulated by passing the value directly
+ *   to the helper function (equivalent to what the SDK does at runtime).
+ *
  * Test Coverage:
  *   1. Eligibility granted when age meets threshold
  *   2. Proof rejected when age is below threshold
@@ -119,8 +125,15 @@ describe('ZK Compliance Gate — gate.compact', () => {
 
 });
 
-// ── Simulation Helpers ─────────────────────────────────────────
+// ── Simulation Helpers ───────────────────────────────────────────────────
 // These simulate Compact circuit behavior for off-chain unit testing.
+//
+// Architecture mirror:
+//   Real contract: export circuit verifyEligibility(ageThreshold: Uint<8>)
+//                    const privateAge = getPrivateAge(); // witness callback
+//   Test helpers:  simulateEligibilityCheck(witnessAge, ageThreshold, ...)
+//                    ^ witnessAge simulates what the SDK callback provides
+//
 // Actual ZK proof generation requires the Compact compiler + proof server.
 
 function createMockLedger() {

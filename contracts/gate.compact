@@ -2,18 +2,34 @@
 // zk-compliance-gate — Level 1: New Moon
 // ZK Age & Eligibility Compliance Gate on Midnight Network
 //
-// Privacy Model:
-//   - Private witness: the user's actual age (never leaves the prover)
-//   - Public ledger:   only the boolean result (eligible: true/false)
+// Privacy Model (Compact witness architecture):
+//   - Private witness: the user's actual age is supplied via a
+//     `witness` callback — it NEVER appears in the transaction
+//     payload and is NEVER broadcast to the network.
+//   - Public circuit input: ageThreshold is the only parameter
+//     on the exported circuit — it is visible to everyone.
+//   - Public ledger: only the boolean result (eligible: true/false)
+//     is written on-chain.
 //
-// This contract proves that a user meets an age threshold
-// WITHOUT disclosing their exact age. The ZK circuit verifies
-// the claim inside the enclave; only the outcome is published.
+// Why witness vs. circuit parameter?
+//   In Compact, parameters declared on `export circuit(...)` are
+//   PUBLIC inputs included in the transaction. To keep a value
+//   truly private, it must be declared as a `witness` callback
+//   implemented by the dApp's TypeScript/JS layer. The runtime
+//   invokes the callback locally on the prover's machine; the
+//   value is consumed inside the ZK circuit and discarded —
+//   it never touches the public ledger or the network node.
 // ============================================================
 
 pragma language_version >= 0.14.0;
 
 import CompactStandardLibrary;
+
+// ── Private Witness ───────────────────────────────────────────
+// Declares a callback implemented by the dApp (TypeScript/JS).
+// Called LOCALLY on the prover's device; result stays in the
+// ZK circuit — never written to any public state or transaction.
+witness getPrivateAge(): Uint<8>;
 
 // ── Public Ledger State ───────────────────────────────────────
 // Everything in `ledger` is visible on-chain to anyone.
@@ -31,27 +47,35 @@ ledger {
 // ── Circuit: verifyEligibility ────────────────────────────────
 // This is the ZK circuit exported to the blockchain.
 //
-// Parameters:
-//   privateAge     — the user's real age (PRIVATE witness, never disclosed)
-//   ageThreshold   — the minimum age required (PUBLIC, sent by the dApp)
+// Parameters (PUBLIC — included in the transaction):
+//   ageThreshold   — the minimum age required (e.g., 18)
+//
+// Private input (via witness — NEVER leaves the prover):
+//   getPrivateAge() — the user's real age, supplied by the dApp
 //
 // The circuit:
-//   1. Proves privateAge >= ageThreshold inside the ZK enclave
-//   2. Writes ONLY true/false to the public ledger
-//   3. Never exposes privateAge on-chain
+//   1. Reads the private age via the witness callback (locally only)
+//   2. Proves privateAge >= ageThreshold inside the ZK enclave
+//   3. Writes ONLY true/false to the public ledger
+//   4. privateAge is consumed and discarded; never exposed on-chain
 export circuit verifyEligibility(
-  privateAge: Uint<8>,         // PRIVATE: user's real age (0–255)
-  ageThreshold: Uint<8>        // PUBLIC:  threshold (e.g., 18)
+  ageThreshold: Uint<8>        // PUBLIC: threshold (e.g., 18) — visible on-chain
 ): [] {
-  // ZK constraint: assert the private age meets the threshold
-  // If this fails, the proof is rejected — no state change occurs
+  // Retrieve the user's private age via the witness callback.
+  // This value exists only inside the ZK circuit on the prover's machine.
+  const privateAge: Uint<8> = getPrivateAge();
+
+  // ZK constraint: assert the private age meets the threshold.
+  // If this fails, proof generation is aborted — no state change occurs
+  // and no information about the private age is leaked.
   assert privateAge >= ageThreshold : "Age does not meet the required threshold";
 
-  // Increment the global check counter (public, visible on chain)
+  // Increment the global check counter (public, visible on-chain)
   increment_counter(ledger.totalChecks);
 
-  // Record the caller's eligibility result on the public ledger
-  // disclose() marks this value as safe to write to public state
+  // Record the caller's eligibility result on the public ledger.
+  // disclose() marks this value as safe to write to public state.
+  // NOTE: only `true` reaches the ledger — a failed proof never gets here.
   ledger.verifications.insert(own_public_key(), disclose(true));
 }
 

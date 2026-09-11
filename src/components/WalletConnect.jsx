@@ -1,17 +1,23 @@
 /**
  * WalletConnect.jsx
- * Lace Wallet connect/disconnect component for Midnight dApp Connector API.
+ * Lace Wallet connect/disconnect component for the Midnight DApp Connector API.
  *
  * Privacy Model:
- *   - Only the wallet's PUBLIC KEY is read from Lace
+ *   - Only the wallet's COIN PUBLIC KEY is read from Lace (ZswapCoinPublicKey)
  *   - No private keys, seeds, or spending authority ever leave the wallet
- *   - The dApp Connector API provides a signed proof — not raw credentials
+ *   - Midnight uses window.midnight.lace — NOT the Cardano CIP-95 connector
+ *
+ * Midnight DApp Connector reference:
+ *   https://docs.midnight.network/develop/tutorial/using-the-midnight-lace-wallet
  */
 
 import { useState, useEffect } from 'react';
 
 // ── Constants ─────────────────────────────────────────────────
-const MIDNIGHT_LACE_API_ID = 'midnight';
+// Midnight exposes its own connector at window.midnight.lace
+// (distinct from Cardano's window.cardano.lace)
+const MIDNIGHT_CONNECTOR_KEY = 'midnight';
+const MIDNIGHT_WALLET_KEY    = 'lace';
 
 export default function WalletConnect({ onConnect, onDisconnect }) {
   const [walletState, setWalletState] = useState('idle'); // idle | connecting | connected | error
@@ -19,48 +25,53 @@ export default function WalletConnect({ onConnect, onDisconnect }) {
   const [errorMsg, setErrorMsg] = useState('');
   const [laceAvailable, setLaceAvailable] = useState(false);
 
-  // ── Detect Lace wallet on mount ───────────────────────────
+  // ── Detect Midnight Lace wallet on mount ─────────────────
   useEffect(() => {
     const checkLace = () => {
+      // Midnight DApp Connector injects at window.midnight.lace
       const available = typeof window !== 'undefined' &&
-        window.cardano?.lace !== undefined;
+        window[MIDNIGHT_CONNECTOR_KEY]?.[MIDNIGHT_WALLET_KEY] !== undefined;
       setLaceAvailable(available);
     };
 
     checkLace();
-    // Retry after short delay (wallet injects asynchronously)
-    const timer = setTimeout(checkLace, 800);
+    // Retry after short delay (wallet extension injects asynchronously)
+    const timer = setTimeout(checkLace, 1000);
     return () => clearTimeout(timer);
   }, []);
 
-  // ── Connect Lace Wallet ───────────────────────────────────
+  // ── Connect Midnight Lace Wallet ─────────────────────────
   const connectWallet = async () => {
     setWalletState('connecting');
     setErrorMsg('');
 
     try {
       if (!laceAvailable) {
-        throw new Error('Lace wallet not detected. Please install the Lace browser extension and switch to Midnight network.');
+        throw new Error(
+          'Midnight Lace wallet not detected. ' +
+          'Please install Lace and switch to Midnight Testnet (Preprod).'
+        );
       }
 
-      // Enable Midnight DApp Connector — this triggers the Lace permission popup
-      const midnight = await window.cardano.lace.enable({ extensions: [{ cip: 95 }] });
+      // Step 1: Request enable from Midnight DApp Connector
+      // This triggers the Lace permission popup for the Midnight connector
+      const connector = window[MIDNIGHT_CONNECTOR_KEY][MIDNIGHT_WALLET_KEY];
+      const api = await connector.enable();
 
-      // Get the wallet's public key (NOT the private key — this is safe to use)
-      const pubKey = await midnight.getPublicKey?.() ??
-        await midnight.experimental?.getPublicKey?.() ??
-        'demo_pubkey_' + Math.random().toString(36).slice(2, 10);
+      // Step 2: Retrieve the Midnight coin public key
+      // This is the ZswapCoinPublicKey used as the key in ledger.verifications
+      // It is safe to expose — it is the public half of the user's key pair
+      const coinPublicKey = await api.coinPublicKey();
 
-      setPublicKey(pubKey);
+      setPublicKey(coinPublicKey);
       setWalletState('connected');
-      onConnect?.({ publicKey: pubKey, api: midnight });
+      onConnect?.({ publicKey: coinPublicKey, api });
 
     } catch (err) {
-      // User rejected or wallet not available
       const msg = err.message?.includes('not detected')
         ? err.message
-        : err.code === 4001
-          ? 'Connection rejected. Please approve the connection in Lace.'
+        : err.code === 4001 || err.message?.toLowerCase().includes('reject')
+          ? 'Connection rejected. Please approve the connection request in Lace.'
           : 'Failed to connect: ' + (err.message || 'Unknown error');
 
       setErrorMsg(msg);
@@ -110,12 +121,14 @@ export default function WalletConnect({ onConnect, onDisconnect }) {
                 </p>
                 {!laceAvailable && (
                   <p style={{ fontSize: '0.78rem', color: 'var(--warning)' }}>
-                    ⚠️ Lace not detected —{' '}
+                    ⚠️ Midnight Lace wallet not detected —{' '}
                     <a href="https://www.lace.io" target="_blank" rel="noopener noreferrer"
                        style={{ color: 'var(--accent)' }}>
                       Install Lace
                     </a>
-                    {' '}and switch to Midnight Preprod
+                    {' '}then switch to{' '}
+                    <strong>Midnight Testnet (Preprod)</strong>
+                    {' '}in wallet settings.
                   </p>
                 )}
               </div>
