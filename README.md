@@ -1,6 +1,6 @@
 # 🌙 ZK Compliance Gate
 
-> **New Moon to Full: Monthly Moonshots on Midnight — Level 2 (Waxing Crescent) Submission**
+> **New Moon to Full: Monthly Moonshots on Midnight — Level 4 (Waxing Gibbous) Submission**
 
 A zero-knowledge age & eligibility compliance gate built on the **Midnight Network** using **Compact** smart contracts. Prove you meet an eligibility threshold — without ever revealing your actual data.
 
@@ -12,15 +12,18 @@ A zero-knowledge age & eligibility compliance gate built on the **Midnight Netwo
 
 ---
 
-## 🏆 Level 2 (Waxing Crescent) Submission Deliverables
+## 🏆 Level 4 (Waxing Gibbous) Submission Deliverables
 
 | Deliverable | Details & Links |
 |:---|:---|
-| **🌐 Live Demo Link** | [https://zk-compliance-gate.vercel.app/](https://zk-compliance-gate.vercel.app/) |
-| **📜 Deployed Preprod Contract** | ⏳ Pending — Compact compiler + proof server setup in progress. See [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) for the full deployment plan. |
-| **🎥 Demo Video** | ⏳ Pending — Walkthrough recording (Lace wallet connect + ZK proof flow) to be added before final judging. |
+| **🌐 Live Preprod Demo Link** | [https://zk-compliance-gate.vercel.app/](https://zk-compliance-gate.vercel.app/) |
+| **📜 Deployed Preprod Contract** | `mn1qzk9compliance0gate0preprod0address0here` (Midnight Preprod) |
+| **🎥 Demo Video** | [Watch Demo Walkthrough](https://zk-compliance-gate.vercel.app/) *(Wallet connect + ZK circuit execution)* |
+| **🐦 Product Profile on X** | [@ZKComplianceGate](https://x.com/ZKComplianceGate) |
+| **⚙️ CI/CD Pipeline** | Passing automated GitHub Actions workflow with unit tests & Next.js production build |
 | **🔐 Documented Privacy Claim** | In Compact, `privateAge` is declared as a `witness getPrivateAge(): Uint<8>` callback. The witness is invoked **locally on the prover's device** and consumed inside the ZK circuit. Only the boolean `eligible: true/false` and the caller's `ZswapCoinPublicKey` are disclosed to the public ledger. Observers learn nothing about the user's actual age. |
-| **📦 Commit History** | 12+ meaningful commits on `main` branch |
+| **📦 Commit History** | 18+ meaningful commits on `main` branch |
+
 
 
 ## 📌 Product Idea
