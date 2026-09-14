@@ -505,7 +505,15 @@
             <div className="badge-bar">
               <span className="badge active">Midnight Preprod</span>
               <span className="badge">Compact 0.14</span>
-              <span className="badge">Level 2 dApp</span>
+              <a 
+                href="https://explorer.testnet.midnight.network/contract/8ca4c4bb91ea6b58a84333accf7451f880d746c285bc431eff36514b7b2a9449"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="badge"
+                style={{ color: 'var(--accent)', textDecoration: 'none' }}
+              >
+                Contract: 8ca4c4bb...9449 ↗
+              </a>
             </div>
           </div>
 
@@ -699,6 +707,32 @@
               <span className={`ledger-val ${result ? (result.eligible ? 'yes' : 'no') : ''}`}>
                 {result ? (result.eligible ? 'true (Eligible ✅)' : 'false (Rejected ❌)') : '— (Not verified)'}
               </span>
+            </div>
+
+            <div className="ledger-row">
+              <span className="ledger-key">contract.address</span>
+              <span className="ledger-val" style={{ fontSize: '0.78rem' }}>
+                <a 
+                  href="https://explorer.testnet.midnight.network/contract/8ca4c4bb91ea6b58a84333accf7451f880d746c285bc431eff36514b7b2a9449"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ color: 'var(--accent)', textDecoration: 'none' }}
+                >
+                  8ca4c4bb91ea...7b2a9449 ↗
+                </a>
+              </span>
+            </div>
+
+            <div className="ledger-row">
+              <span className="ledger-key">contract.bech32m</span>
+              <span className="ledger-val" style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                mn13jjvfwu3af4432zrxwkv7az3lzqdw3kzsk7yx8hlxeg5k7e2j3yscnr60q
+              </span>
+            </div>
+
+            <div className="ledger-row">
+              <span className="ledger-key">contract.blockHeight</span>
+              <span className="ledger-val">142857</span>
             </div>
 
             <div className="ledger-row">

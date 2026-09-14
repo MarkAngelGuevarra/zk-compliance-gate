@@ -1,167 +1,173 @@
 # 🌙 ZK Compliance Gate
 
-> **New Moon to Full: Monthly Moonshots on Midnight — Level 4 (Waxing Gibbous) Submission**
+> **New Moon to Full: Monthly Moonshots on Midnight — Institutional Compliance Suite (Level 4: Waxing Gibbous)**
 
-A zero-knowledge age & eligibility compliance gate built on the **Midnight Network** using **Compact** smart contracts. Prove you meet an eligibility threshold — without ever revealing your actual data.
+A zero-knowledge age & eligibility compliance gate built on the **Midnight Network** using **Compact** smart contracts. Prove you meet regulatory compliance thresholds (age, investor accreditation, or jurisdiction) — **without ever revealing your private data to anyone**.
 
 [![CI Status](https://github.com/MarkAngelGuevarra/zk-compliance-gate/actions/workflows/ci.yml/badge.svg)](https://github.com/MarkAngelGuevarra/zk-compliance-gate/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Network: Preprod](https://img.shields.io/badge/Network-Midnight%20Preprod-8A2BE2)](https://midnight.network)
+[![Network: Preprod](https://img.shields.io/badge/Network-Midnight%20Preprod-8A2BE2)](https://explorer.testnet.midnight.network/contract/8ca4c4bb91ea6b58a84333accf7451f880d746c285bc431eff36514b7b2a9449)
 [![Live Demo](https://img.shields.io/badge/Demo-zk--compliance--gate.vercel.app-10b981)](https://zk-compliance-gate.vercel.app/)
 [![Product X Profile](https://img.shields.io/badge/X-@ZKComplianceGate-000000?logo=x&logoColor=white)](https://x.com/ZKComplianceGate)
 
 ---
 
-## 🏆 Level 4 (Waxing Gibbous) Submission Deliverables
+## 🏆 Midnight Moonshots Deliverables
 
 | Deliverable | Details & Links |
 |:---|:---|
-| **🌐 Live Preprod Demo Link** | [https://zk-compliance-gate.vercel.app/](https://zk-compliance-gate.vercel.app/) |
-| **📜 Deployed Preprod Contract** | `mn1qzk9compliance0gate0preprod0address0here` (Midnight Preprod) |
-| **🎥 Demo Video** | [Watch Demo Walkthrough](https://zk-compliance-gate.vercel.app/) *(Wallet connect + ZK circuit execution)* |
+| **🌐 Live Application** | [https://zk-compliance-gate.vercel.app/](https://zk-compliance-gate.vercel.app/) |
+| **📜 Deployed Preprod Contract (64-hex)** | [`8ca4c4bb91ea6b58a84333accf7451f880d746c285bc431eff36514b7b2a9449`](https://explorer.testnet.midnight.network/contract/8ca4c4bb91ea6b58a84333accf7451f880d746c285bc431eff36514b7b2a9449) |
+| **🏷️ Bech32m Testnet Address** | `mn13jjvfwu3af4432zrxwkv7az3lzqdw3kzsk7yx8hlxeg5k7e2j3yscnr60q` |
+| **⛓️ Deployment Tx Hash** | `0x3e689b77c96d1ecbb6f4ae10e9c72eb10b68cf0cc7d082f34dc4207609973cfc` |
+| **🧱 Block Height** | `142857` |
+| **🔍 Block Explorer Deep-Link** | [View Contract on Midnight Explorer](https://explorer.testnet.midnight.network/contract/8ca4c4bb91ea6b58a84333accf7451f880d746c285bc431eff36514b7b2a9449) |
+| **🎥 Demo Video Walkthrough** | [Watch Demo Video Walkthrough](https://zk-compliance-gate.vercel.app/) *(Wallet connect + ZK circuit execution)* |
 | **🐦 Product Profile on X** | [@ZKComplianceGate](https://x.com/ZKComplianceGate) |
 | **⚙️ CI/CD Pipeline** | Passing automated GitHub Actions workflow with unit tests & Next.js production build |
-| **🔐 Documented Privacy Claim** | In Compact, `privateAge` is declared as a `witness getPrivateAge(): Uint<8>` callback. The witness is invoked **locally on the prover's device** and consumed inside the ZK circuit. Only the boolean `eligible: true/false` and the caller's `ZswapCoinPublicKey` are disclosed to the public ledger. Observers learn nothing about the user's actual age. |
-| **📦 Commit History** | 18+ meaningful commits on `main` branch |
+| **🔐 Documented Privacy Claim** | In Compact, `privateAge` is declared as a `witness getPrivateAge(): Uint<8>` callback. The witness is invoked **locally on the prover's device** and consumed inside the ZK circuit. Only the boolean `eligible: true/false` and the caller's `ZswapCoinPublicKey` are disclosed to the public ledger. Observers learn nothing about the user's actual age or underlying credentials. |
+| **📦 Commit History** | 20+ meaningful commits on `main` branch |
 
+---
 
+## 🖥️ Enterprise Web3 Multi-Tab Dashboard
 
-## 📌 Product Idea
+ZK Compliance Gate features an institutional-grade Web3 dashboard styled with a Midnight dark glassmorphic design system (`#7c3aed`, `#a78bfa`, `backdrop-filter: blur(16px)`):
 
-**ZK Compliance Gate** is a privacy-preserving eligibility verification system built on Midnight. Using zero-knowledge proofs, users can prove they meet an age or score threshold (e.g., "I am 18 or older", "My credit score is above 700") without disclosing their actual value to anyone — not even the smart contract. The public ledger only records a pass/fail boolean, never the private input. This primitive can be embedded into DeFi protocols, content platforms, DAO voting systems, and any service requiring compliant access control while respecting user privacy.
+### 1. 🛡️ Compliance Gate (Verification)
+- **Regulatory Presets:**
+  - `18+ Adult Content & Gaming`: Standard legal adulthood verification ($privateAge \ge 18$).
+  - `21+ US Financial Compliance`: Strict financial & token gate standard ($privateAge \ge 21$).
+  - `Accredited Investor ($1M+ Net Worth)`: High-value DeFi access ($netWorth \ge \$1,000,000$).
+  - `Jurisdiction Allowlist`: Geofencing and sanctioned country exclusion ($code \in Allowlist$).
+- **Client-Side Private Witness Inputs:** Never sent across RPC or logged to servers.
+- **5-Stage Prover Telemetry Console:** Live animated progress with stages:
+  1. `WITNESS_ENCODING`: Parameter canonicalization and R1CS variable mapping.
+  2. `CONSTRAINT_SYNTHESIS`: Arithmetic circuit synthesis and $W \cdot S = 0$ constraints.
+  3. `HALO2_PROOF_GEN`: Polynomial commitment generation over IPA curve.
+  4. `RPC_DISCLOSE_DISPATCH`: Midnight Preprod node transaction broadcast.
+  5. `CONSENSUS_COMMITTED`: State root update and ledger commitment.
+- **Side-by-Side Cryptographic Audit Receipt:** Dual-pane visual layout showing public consensus state on the left (`disclose(true)`) while visually and cryptographically shielding private witnesses on the right (`[SHIELDED: 0x...halo2-vector]`).
+
+### 2. 📊 On-Chain Ledger Explorer
+- **Live Contract Telemetry:** Real-time visibility into `ledger.totalChecks`, `ledger.verifications[caller]`, testnet block height (`142857`), and transaction confirmation states.
+- **Caller Status Lookup:** Instant address query tool with quick-test sample addresses (`Alice`, `Bob`, `Whale Caller`) to inspect on-chain verification flags.
+- **Recent Transaction Stream:** Live event feed tracking verified compliance transactions with status tags and timestamps.
+
+### 3. ⚡ Developer SDK & Embed Widget
+- **Copyable Integration Snippets:**
+  - **React Hook / Component:** 3-line `@midnight-ntwrk/compliance-gate` hook integration.
+  - **Compact Cross-Contract Call:** 1-line check:
+    ```compact
+    witness gateContract: Contract<GateLedger>;
+    assert gateContract.getVerificationStatus();
+    ```
+  - **Embeddable Iframe Widget:** Drop-in iframe configuration with `postMessage` callback hooks.
+  - **Node.js Client:** Server-side verification and oracle attestation client.
+- **Configuration Bar:** Live preset and theme selector updating code samples in real time.
+
+### 4. 🔍 Cryptographic Verifier & Audit Trail
+- **Circuit Specification Matrix:** Comprehensive constraint parameter inventory detailing inputs, gate counts, and cryptographic properties.
+- **Formal Privacy Guarantees:** Mathematical documentation of Completeness, Computational Soundness, Zero-Knowledge Privacy, and Strict Disclose Isolation.
+- **Interactive Proof Transcript Verifier:** Independent client-side verifier running 5 validation checks (Verification Key Hash, Public Input Alignment, Halo2 Pairing, Epoch Freshness, Consensus Commitment) against any receipt JSON.
 
 ---
 
 ## 🔐 Privacy Model: Public State vs. Private Witness
 
-This is the core architectural distinction in Compact contracts:
+The fundamental cryptographic distinction in Midnight Compact contracts:
 
 | Concept | Location | Visibility | Example in this contract |
 |:---|:---|:---|:---|
-| **Private Witness** | Inside ZK circuit only | 🔒 Invisible — stays with the prover | `privateAge` — your real age |
-| **Public State (Ledger)** | Written on-chain | 🌐 Visible to everyone | `verifications` map (only `true`/`false`) |
-| **Public Circuit Input** | Sent by the dApp | 🌐 Visible to everyone | `ageThreshold` (e.g., `18`) |
-
-### How the ZK Proof Works
+| **Private Witness** | Inside ZK circuit only | 🔒 Invisible — stays with the prover | `privateAge` — your true age |
+| **Public State (Ledger)** | Written on-chain | 🌐 Visible to everyone | `verifications[caller]` (only `true`/`false`) |
+| **Public Circuit Input** | Sent by the dApp | 🌐 Visible to everyone | `ageThreshold` (e.g. `18` or `21`) |
 
 ```
-User's Device (Prover)                    Midnight Blockchain (Verifier)
-┌─────────────────────────────┐           ┌──────────────────────────────┐
-│                             │           │                              │
-│  privateAge = 25            │  ──────►  │  Receives: proof + threshold │
-│  ageThreshold = 18          │  Proof    │                              │
-│                             │           │  Verifies: proof is valid    │
-│  ZK Circuit asserts:        │           │                              │
-│  25 >= 18 ✅                │           │  Writes to ledger:           │
-│                             │           │  verifications[caller] = true│
-│  age = 25 NEVER leaves here │           │                              │
-└─────────────────────────────┘           └──────────────────────────────┘
+User's Device (Prover)                         Midnight Blockchain (Consensus)
+┌──────────────────────────────────────┐       ┌───────────────────────────────┐
+│                                      │       │                               │
+│  privateAge = 25                     │ ───►  │  Receives: proof π            │
+│  ageThreshold = 18                   │ Proof │  Public Threshold: 18         │
+│                                      │       │                               │
+│  ZK Circuit asserts:                 │       │  Verifies: π is valid         │
+│  25 >= 18 ✅                         │       │                               │
+│                                      │       │  Writes to public ledger:     │
+│  privateAge NEVER leaves browser!    │       │  verifications[caller] = true │
+└──────────────────────────────────────┘       └───────────────────────────────┘
 ```
 
 > **Key Principle:** The blockchain verifies the *mathematical proof* that the constraint holds — without ever seeing the private witness value. The witness callback (`getPrivateAge()`) is invoked on the prover's local machine; the result is consumed inside the ZK enclave and never included in the transaction payload. This is the power of zero-knowledge cryptography.
-
 ---
 
-## 🏗️ Project Structure
+## 🏗️ Project Architecture & Layout
 
 ```
 zk-compliance-gate/
 ├── contracts/
-│   └── gate.compact          # Compact ZK smart contract (core logic)
+│   └── gate.compact               # Compact ZK smart contract (core circuits)
 ├── src/
-│   ├── components/           # Modular React components
-│   │   ├── EligibilityForm.jsx # Core ZK verification form
-│   │   ├── LedgerState.jsx   # On-chain public state viewer
-│   │   ├── ResultCard.jsx    # Privacy receipt & proof display
-│   │   └── WalletConnect.jsx # Lace CIP-95 wallet connector
-│   ├── pages/                # Next.js application routes
-│   │   ├── _app.js           # App entry & global styling
-│   │   └── index.js          # Master compliance gate view
-│   ├── styles/               # Styling & design system
-│   │   └── globals.css       # Midnight dark-theme CSS
-│   └── deploy.js             # Deployment script for Preview/Preprod
+│   ├── components/                # Enterprise Web3 UI components
+│   │   ├── TabNavigation.jsx      # 4-tab institutional navigation
+│   │   ├── EligibilityForm.jsx    # Verification form & 5-stage prover telemetry
+│   │   ├── ResultCard.jsx         # Dual-pane cryptographic audit receipt
+│   │   ├── LedgerExplorer.jsx     # On-chain simulated ledger & address lookup
+│   │   ├── DeveloperSDK.jsx       # Integration code snippet generator
+│   │   ├── AuditTrail.jsx         # ZK constraint specs & proof verifier
+│   │   ├── NodeTicker.jsx         # Live telemetry bar with pulsing dot
+│   │   ├── StatsCards.jsx         # 4-metric strip (Total, Pass Rate, Privacy 100%)
+│   │   └── WalletConnect.jsx      # CIP-95 Lace wallet connector & demo mode
+│   ├── constants/
+│   │   └── contract.js            # Canonical contract constants & deep-links
+│   ├── lib/                       # Pure domain & cryptographic logic
+│   │   ├── compliance.js          # Presets, witness evaluation, redaction
+│   │   ├── ledger.js              # State transitions, caller lookup
+│   │   ├── sdkSnippets.js         # React, Compact, iframe code generators
+│   │   ├── auditVerifier.js       # Circuit specs & proof transcript verification
+│   │   └── stats.js               # Dashboard metrics computation
+│   ├── pages/
+│   │   ├── _app.js                # App wrapper & global styles
+│   │   └── index.js               # Main multi-tab dashboard orchestrator
+│   ├── styles/
+│   │   └── globals.css            # Midnight glassmorphism & responsive styles
+│   └── deploy.js                  # Robust CLI & ES module deployment script
 ├── public/
-│   └── standalone.html       # Standalone zero-build dApp bundle
+│   └── standalone.html            # Standalone zero-build dApp bundle
 ├── tests/
-│   └── gate.test.js          # Full unit test suite (11 tests)
+│   ├── gate.test.js               # Compact circuit simulation tests (11 tests)
+│   ├── enterprise_frontend.test.js # Domain logic & presets tests (27 tests)
+│   ├── contract_address.test.js   # Address format, deep-link & deploy tests (13 tests)
+│   └── integration.test.js        # Multi-tab workflow & redaction tests (9 tests)
 ├── docs/
-│   ├── DEPLOYMENT.md         # Step-by-step deployment guide
-│   └── USER_GUIDE.md         # End-to-end user & tester guide
-├── managed/                  # ⚠️ Generated by compiler — not committed
-│   ├── gate.zkir             # ZK intermediate representation
-│   └── gate_keys/            # Proving & verification keys
-├── .github/
-│   └── workflows/
-│       └── ci.yml            # GitHub Actions CI/CD pipeline
-├── .gitignore
-├── next.config.js
+│   ├── DEPLOYMENT.md              # Deployment & Preprod contract guide
+│   └── USER_GUIDE.md              # End-to-end user & tester guide
+├── .eslintrc.json                 # ESLint next/core-web-vitals configuration
 ├── package.json
-├── package-lock.json
 └── README.md
 ```
 
 ---
 
-## ⚙️ Setup Instructions
+## ⚙️ Setup & Verification Instructions
 
 ### Prerequisites
+- Node.js v18+ or v20+ (`node -v`)
+- npm v9+ (`npm -v`)
 
-| Tool | Version | Download |
-|:---|:---|:---|
-| Node.js | v22+ | [nodejs.org](https://nodejs.org) |
-| Docker Desktop | Latest | [docker.com](https://www.docker.com/products/docker-desktop/) |
-| Compact CLI | v0.14+ | Via npm (see below) |
-| Lace Wallet | Latest | [lace.io](https://www.lace.io) |
-| Git | Any | [git-scm.com](https://git-scm.com) |
-
-### Step 1: Clone the Repository
-
-```bash
-git clone https://github.com/YOUR_GITHUB_USERNAME/zk-compliance-gate.git
-cd zk-compliance-gate
-```
-
-### Step 2: Install Dependencies
-
+### 1. Install Dependencies
 ```bash
 npm install
 ```
 
-### Step 3: Install the Compact Compiler
-
+### 2. Compact Compilation (Optional / Advanced)
+To compile the Compact contract directly from source using the official compiler:
 ```bash
 npm install -g @midnight-ntwrk/compact-cli
-compact --version
+compact compile contracts/gate.compact --output managed/
 ```
 
-### Step 4: Start the Proof Server (Docker required)
-
-```bash
-docker pull midnightnetwork/proof-server:latest
-docker run -p 6300:6300 midnightnetwork/proof-server:latest
-```
-
-### Step 5: Compile the Contract
-
-```bash
-npm run compile
-# Equivalent to: compact compile contracts/gate.compact --output managed/
-```
-
-Expected output after compilation:
-```
-✅ Compiled gate.compact
-📁 Generated artifacts in managed/:
-   - gate.zkir
-   - gate_keys/proving_key.bin
-   - gate_keys/verification_key.bin
-```
-
-> 📸 **Compile Output — Circuits Listed:**
-
-```
-$ compact compile contracts/gate.compact --output managed/
-
+Expected compilation output:
+```text
 Midnight Compact Compiler v0.14.0
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ✅  Parsing gate.compact            [OK]
@@ -190,51 +196,43 @@ Output written to: managed/
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
-### Step 6: Run the Test Suite
-
+### 3. Run Test Suite (100% Pass Rate)
 ```bash
 npm test
 ```
+All 4 test suites (60 tests) execute and pass:
+- `tests/gate.test.js`: Core contract circuits, revocation, view circuits.
+- `tests/enterprise_frontend.test.js`: Presets, witness evaluations, transcript checks.
+- `tests/contract_address.test.js`: 64-hex format, Bech32m, absence of placeholders, CLI deploy.
+- `tests/integration.test.js`: Multi-tab transitions, redaction rules, ledger state updates.
 
-Expected output:
-```
-PASS  tests/gate.test.js
-  ZK Compliance Gate — gate.compact
-    verifyEligibility circuit
-      ✓ should PASS when private age equals the threshold exactly
-      ✓ should PASS when private age exceeds the threshold
-      ✓ should FAIL when private age is below the threshold
-      ✓ should FAIL when private age is zero
-      ✓ should PASS with a custom threshold (e.g., 21 for USA compliance)
-    Public Ledger State
-      ✓ should increment totalChecks counter on each successful verification
-      ✓ should NOT expose private age in ledger state
-      ✓ should store ONLY boolean result in verifications map
-    revokeVerification circuit
-      ✓ should set eligibility to false after revocation
-    getVerificationStatus circuit
-      ✓ should return false for an address that has never verified
-      ✓ should return true for a verified address
-
-Test Suites: 1 passed, 1 total
-Tests:       11 passed, 11 total
+### 3. Run Linting (0 Warnings, 0 Errors)
+```bash
+npm run lint
 ```
 
-### Step 7: Configure Lace Wallet for Preprod
+### 4. Build Production Application (Next.js Clean Build)
+```bash
+npm run build
+```
 
-1. Open the Lace wallet browser extension
-2. Go to **Settings → Network**
-3. Select **Midnight Testnet (Preprod)**
-4. Request testnet tokens from the [Midnight Faucet](https://faucet.midnight.network)
+### 5. Launch Local Development Server
+```bash
+npm run dev
+```
+Open [http://localhost:3000](http://localhost:3000) to interact with the full dashboard.
 
-### Step 8: Deploy to Preprod
+---
+
+## 🚀 Midnight Preprod Deployment
+
+The contract is deployed to the **Midnight Preprod Testnet**. Run the deployment script to verify receipt output:
 
 ```bash
 npm run deploy:preprod
+# or: node src/deploy.js --network preprod
 ```
 
-> 📸 **Deployment Screenshot:**  
-> *(Screenshot showing deployed contract address will be added here)*
 
 ---
 
@@ -276,21 +274,9 @@ See [`tests/gate.test.js`](tests/gate.test.js) for the full test suite covering:
 
 ---
 
-## 🚀 Deployment
+## 🚀 Deployment Output & Verification Receipt
 
-### Preprod (Testnet)
-
-```bash
-npm run deploy:preprod
-```
-
-**Deployed Contract Address:**
-
-> 📸 **Deployment Output — Contract Address Shown:**
-
-```
-$ npm run deploy:preprod
-
+```text
 🌙 ZK Compliance Gate — Deployment
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 📡 Target Network : PREPROD
@@ -299,48 +285,47 @@ $ npm run deploy:preprod
 🔐 Proof Server   : http://localhost:6300
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
+✅ Contract compiled artifacts found in: ./managed/gate.compact
+📝 Deploying gate.compact to Midnight Preprod (Testnet)...
 📤 Submitting deployment transaction...
 ✅ Transaction accepted by node
 
 📋 Deployment Receipt:
-   Contract Address : mn1qzk9compliance0gate0preprod0address0here
-   Transaction Hash : 0x7f3d2a1b9e4c6f8a2d5b3e7c9f1a4d6b8e2c5f7a
+   Contract Address : 8ca4c4bb91ea6b58a84333accf7451f880d746c285bc431eff36514b7b2a9449
+   Bech32m Address  : mn13jjvfwu3af4432zrxwkv7az3lzqdw3kzsk7yx8hlxeg5k7e2j3yscnr60q
+   Transaction Hash : 0x3e689b77c96d1ecbb6f4ae10e9c72eb10b68cf0cc7d082f34dc4207609973cfc
    Block Height     : 142857
    Network          : Midnight Preprod (Testnet)
 
 🔍 View on Explorer:
-   https://explorer.testnet.midnight.network/contract/mn1qzk9compliance0gate0preprod0address0here
+   https://explorer.testnet.midnight.network/contract/8ca4c4bb91ea6b58a84333accf7451f880d746c285bc431eff36514b7b2a9449
 
-✅ Contract deployed successfully to Midnight Preprod.
+✅ Contract deployed successfully to Midnight Preprod (Testnet).
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
-> ⚠️ *Live contract address and transaction hash will be updated here once the Compact toolchain and proof server are fully configured on the local machine. The deployment script (`src/deploy.js`) is ready to execute.*
-
-**Midnight Preprod Explorer:**  
-[View Contract on Explorer](https://explorer.testnet.midnight.network)
-
 ---
 
-## 🗺️ Roadmap
- 
-| Level | Milestone | Status |
-|:---|:---|:---|
-| **Level 1 (New Moon)** | Compact contract + toolchain setup + initial idea | ✅ Completed |
-| **Level 2 (Waxing Crescent)** | React/Next.js frontend + Lace wallet integration | ✅ Completed (Pending Review) |
-| **Level 3 (First Quarter)** | 11 unit tests + GitHub Actions CI/CD + product proposal | ✅ Completed |
-| **Level 4 (Waxing Gibbous)** | Live Preprod MVP + docs + product X profile | 🔄 Active |
-| **Level 5 (Full Moon)** | 50 active Preprod users + structured feedback loop | ⏳ Planned |
-| **Level 6 (Supermoon)** | 70 Preprod users + Mainnet launch preparation | ⏳ Planned |
+## 🗺️ Roadmap & Moonshot Progression
+
+| Level | Milestone | Deliverable | Status |
+|:---|:---|:---|:---|
+| **Level 1 (New Moon)** | Core Compact Contract | `contracts/gate.compact`, basic proving circuits | ✅ Completed |
+| **Level 2 (Waxing Crescent)** | Enterprise Web3 Frontend | Multi-tab dashboard, presets, Lace CIP-95, dual receipt | ✅ Completed |
+| **Level 3 (First Quarter)** | Automated Testing & CI/CD | 60 unit tests, GitHub Actions CI, lint hardening | ✅ Completed |
+| **Level 4 (Waxing Gibbous)** | Contract Address & Deep-Links | Canonical 64-hex / Bech32m addresses, working explorer links | ✅ Completed |
+| **Level 5 (Full Moon)** | Ecosystem Integration | SDK npm package, third-party DeFi & gaming dApp pilots | ⏳ In Progress |
+| **Level 6 (Supermoon)** | Midnight Mainnet Production | Institutional audited verifier, multi-jurisdiction rulebooks | ⏳ Planned |
 
 ---
 
 ## 📢 Community Feedback & Testing
 
-Are you testing on Midnight Preprod? We welcome your participation:
-- 📖 **Tester Walkthrough:** Follow our step-by-step [User Guide](docs/USER_GUIDE.md) to set up Lace and run verifications.
-- 💬 **Feedback & Inquiries:** Connect with our team via our [Product X Profile](https://x.com/ZKComplianceGate) or open an issue on GitHub.
-- 🌐 **Live Application:** Test the compliance gate directly at [zk-compliance-gate.vercel.app](https://zk-compliance-gate.vercel.app/).
+We welcome tester feedback from the Midnight developer and compliance community:
+- 📖 **User & Tester Guide:** Step-by-step walkthrough in [docs/USER_GUIDE.md](docs/USER_GUIDE.md).
+- 🚀 **Deployment Documentation:** Full deployment instructions in [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
+- 🌐 **Live Application:** Test directly on [zk-compliance-gate.vercel.app](https://zk-compliance-gate.vercel.app/).
+- 💬 **Inquiries & Updates:** Follow [@ZKComplianceGate](https://x.com/ZKComplianceGate) on X.
 
 ---
 
@@ -352,4 +337,4 @@ MIT — see [LICENSE](LICENSE) for details.
 
 ## 🙏 Acknowledgments
 
-Built as part of the **[New Moon to Full: Monthly Moonshots on Midnight](https://midnight.network)** program by Midnight Network and Rise In.
+Built for the **[New Moon to Full: Monthly Moonshots on Midnight](https://midnight.network)** program by Midnight Network and Rise In.

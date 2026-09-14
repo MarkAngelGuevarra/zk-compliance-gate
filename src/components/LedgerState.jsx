@@ -49,7 +49,7 @@ export default function LedgerState({ result, checkCount }) {
       }}>
         <strong style={{ color: 'var(--warning)' }}>🔒 Never stored on-chain:</strong>{' '}
         <code>private_age</code>, raw credentials, or any identifying data.
-        Midnight's ZK circuits ensure these values are consumed locally
+        Midnight&apos;s ZK circuits ensure these values are consumed locally
         by the prover and discarded after proof generation.
       </div>
     </div>

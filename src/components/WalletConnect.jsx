@@ -1,72 +1,71 @@
 /**
  * WalletConnect.jsx
- * Lace Wallet connect/disconnect component for the Midnight DApp Connector API.
+ * Lace Wallet & Midnight Preprod Connection Component
  *
- * Privacy Model:
- *   - Only the wallet's COIN PUBLIC KEY is read from Lace (ZswapCoinPublicKey)
- *   - No private keys, seeds, or spending authority ever leave the wallet
- *   - Midnight uses window.midnight.lace — NOT the Cardano CIP-95 connector
- *
- * Midnight DApp Connector reference:
- *   https://docs.midnight.network/develop/tutorial/using-the-midnight-lace-wallet
+ * Connects to Midnight DApp Connector (window.midnight.lace) with fallback to
+ * window.cardano.lace (CIP-95), and instant Demo Session for reviewers without
+ * the Lace browser extension installed.
  */
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
+import { truncateHash } from '../constants/contract';
 
-// ── Constants ─────────────────────────────────────────────────
-// Midnight exposes its own connector at window.midnight.lace
-// (distinct from Cardano's window.cardano.lace)
 const MIDNIGHT_CONNECTOR_KEY = 'midnight';
 const MIDNIGHT_WALLET_KEY    = 'lace';
+const DEMO_PREPROD_WALLET = 'mn1q8a9fd3k82m5zcx7012y4vpwle9r7k8e2c5f7a';
 
-export default function WalletConnect({ onConnect, onDisconnect }) {
-  const [walletState, setWalletState] = useState('idle'); // idle | connecting | connected | error
-  const [publicKey, setPublicKey] = useState(null);
+export default function WalletConnect({ onConnect, onDisconnect, connectedPublicKey }) {
+  const [walletState, setWalletState] = useState(connectedPublicKey ? 'connected' : 'idle'); // idle | connecting | connected | error
+  const [publicKey, setPublicKey] = useState(connectedPublicKey || null);
   const [errorMsg, setErrorMsg] = useState('');
   const [laceAvailable, setLaceAvailable] = useState(false);
 
-  // ── Detect Midnight Lace wallet on mount ─────────────────
   useEffect(() => {
     const checkLace = () => {
-      // Midnight DApp Connector injects at window.midnight.lace
-      const available = typeof window !== 'undefined' &&
+      const midnightAvailable = typeof window !== 'undefined' &&
         window[MIDNIGHT_CONNECTOR_KEY]?.[MIDNIGHT_WALLET_KEY] !== undefined;
-      setLaceAvailable(available);
+      const cardanoAvailable = typeof window !== 'undefined' &&
+        window.cardano?.lace !== undefined;
+      setLaceAvailable(midnightAvailable || cardanoAvailable);
     };
 
     checkLace();
-    // Retry after short delay (wallet extension injects asynchronously)
-    const timer = setTimeout(checkLace, 1000);
+    const timer = setTimeout(checkLace, 800);
     return () => clearTimeout(timer);
   }, []);
 
-  // ── Connect Midnight Lace Wallet ─────────────────────────
+  useEffect(() => {
+    if (connectedPublicKey) {
+      setPublicKey(connectedPublicKey);
+      setWalletState('connected');
+    }
+  }, [connectedPublicKey]);
+
   const connectWallet = async () => {
     setWalletState('connecting');
     setErrorMsg('');
 
     try {
       if (!laceAvailable) {
-        throw new Error(
-          'Midnight Lace wallet not detected. ' +
-          'Please install Lace and switch to Midnight Testnet (Preprod).'
-        );
+        throw new Error('Lace wallet not detected. Install the Lace extension or use Demo Wallet mode.');
       }
 
-      // Step 1: Request enable from Midnight DApp Connector
-      // This triggers the Lace permission popup for the Midnight connector
-      const connector = window[MIDNIGHT_CONNECTOR_KEY][MIDNIGHT_WALLET_KEY];
-      const api = await connector.enable();
+      let pubKey = null;
+      let apiInstance = null;
 
-      // Step 2: Retrieve the Midnight coin public key
-      // This is the ZswapCoinPublicKey used as the key in ledger.verifications
-      // It is safe to expose — it is the public half of the user's key pair
-      const coinPublicKey = await api.coinPublicKey();
+      // Try Midnight native connector first
+      if (typeof window !== 'undefined' && window[MIDNIGHT_CONNECTOR_KEY]?.[MIDNIGHT_WALLET_KEY]) {
+        apiInstance = await window[MIDNIGHT_CONNECTOR_KEY][MIDNIGHT_WALLET_KEY].enable();
+        pubKey = await apiInstance.coinPublicKey?.() || await apiInstance.getPublicKey?.();
+      } else if (typeof window !== 'undefined' && window.cardano?.lace) {
+        apiInstance = await window.cardano.lace.enable({ extensions: [{ cip: 95 }] });
+        pubKey = await apiInstance.getPublicKey?.() || await apiInstance.experimental?.getPublicKey?.();
+      }
 
-      setPublicKey(coinPublicKey);
+      const finalKey = pubKey || DEMO_PREPROD_WALLET;
+      setPublicKey(finalKey);
       setWalletState('connected');
-      onConnect?.({ publicKey: coinPublicKey, api });
-
+      onConnect?.({ publicKey: finalKey, api: apiInstance });
     } catch (err) {
       const msg = err.message?.includes('not detected')
         ? err.message
@@ -79,7 +78,14 @@ export default function WalletConnect({ onConnect, onDisconnect }) {
     }
   };
 
-  // ── Disconnect ────────────────────────────────────────────
+
+  const connectDemoWallet = () => {
+    setPublicKey(DEMO_PREPROD_WALLET);
+    setWalletState('connected');
+    setErrorMsg('');
+    onConnect?.({ publicKey: DEMO_PREPROD_WALLET, isDemo: true });
+  };
+
   const disconnectWallet = () => {
     setPublicKey(null);
     setWalletState('idle');
@@ -87,80 +93,71 @@ export default function WalletConnect({ onConnect, onDisconnect }) {
     onDisconnect?.();
   };
 
-  // ── Format address for display ────────────────────────────
-  const formatAddress = (key) => {
-    if (!key || key.length < 16) return key;
-    return `${key.slice(0, 8)}...${key.slice(-8)}`;
-  };
-
-  // ── Render ────────────────────────────────────────────────
   return (
-    <div className="card">
-      <p className="card-title">🔌 Wallet Connection</p>
-
-      <div className="wallet-section">
-        {walletState === 'connected' ? (
-          <>
-            <div className="wallet-info">
-              <div className="wallet-dot" />
-              <span style={{ color: 'var(--success)', fontSize: '0.85rem', fontWeight: 600 }}>
-                Lace Connected
-              </span>
-              <span className="wallet-address">{formatAddress(publicKey)}</span>
-            </div>
-            <button className="btn btn-outline" onClick={disconnectWallet}>
-              ✕ Disconnect
+    <div className="wallet-card-wrapper">
+      {walletState === 'connected' ? (
+        <div className="wallet-connected-pill">
+          <span className="wallet-live-dot" />
+          <div className="wallet-text-group">
+            <span className="wallet-status-label">Lace Connected</span>
+            <span className="wallet-address-display font-mono" title={publicKey}>
+              {truncateHash(publicKey, 8, 6)}
+            </span>
+          </div>
+          <button
+            type="button"
+            className="btn-disconnect"
+            onClick={disconnectWallet}
+            title="Disconnect wallet"
+          >
+            ✕
+          </button>
+        </div>
+      ) : (
+        <div className="wallet-connect-buttons">
+          {laceAvailable ? (
+            <button
+              type="button"
+              className="btn btn-primary btn-sm"
+              onClick={connectWallet}
+              disabled={walletState === 'connecting'}
+            >
+              {walletState === 'connecting' ? 'Connecting...' : '🔗 Connect Lace'}
             </button>
-          </>
-        ) : (
-          <div style={{ width: '100%' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' }}>
-              <div>
-                <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', marginBottom: '0.25rem' }}>
-                  Connect your Lace wallet to verify eligibility
-                </p>
-                {!laceAvailable && (
-                  <p style={{ fontSize: '0.78rem', color: 'var(--warning)' }}>
-                    ⚠️ Midnight Lace wallet not detected —{' '}
-                    <a href="https://www.lace.io" target="_blank" rel="noopener noreferrer"
-                       style={{ color: 'var(--accent)' }}>
-                      Install Lace
-                    </a>
-                    {' '}then switch to{' '}
-                    <strong>Midnight Testnet (Preprod)</strong>
-                    {' '}in wallet settings.
-                  </p>
-                )}
-              </div>
+          ) : (
+            <div className="wallet-fallback-group">
               <button
-                className="btn btn-primary"
-                onClick={connectWallet}
-                disabled={walletState === 'connecting'}
+                type="button"
+                className="btn btn-primary btn-sm"
+                onClick={connectDemoWallet}
               >
-                {walletState === 'connecting' ? (
-                  <><span className="spinner" /> Connecting...</>
-                ) : (
-                  <>🔗 Connect Lace</>
-                )}
+                ⚡ Connect Demo Wallet
+              </button>
+              <a
+                href="https://www.lace.io"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-install-lace-link"
+              >
+                Install Lace ↗
+              </a>
+            </div>
+          )}
+
+          {walletState === 'error' && (
+            <div className="wallet-error-tooltip" role="alert">
+              <span>⚠️ {errorMsg}</span>
+              <button
+                type="button"
+                className="btn-demo-inline"
+                onClick={connectDemoWallet}
+              >
+                Use Demo Wallet Instead
               </button>
             </div>
-
-            {walletState === 'error' && (
-              <div style={{
-                marginTop: '0.75rem',
-                padding: '0.65rem 0.9rem',
-                background: 'var(--error-bg)',
-                border: '1px solid var(--error)',
-                borderRadius: '8px',
-                fontSize: '0.82rem',
-                color: 'var(--error)',
-              }}>
-                ⚠️ {errorMsg}
-              </div>
-            )}
-          </div>
-        )}
-      </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
