@@ -39,8 +39,8 @@ jobs:
       - name: ⚙️ Compile contracts/gate.compact
         run: |
           export PATH="$HOME/.compact/bin:$HOME/.cargo/bin:$PATH"
-          mkdir -p managed
-          compact compile contracts/gate.compact --output managed/ || compact compile contracts/gate.compact managed/ || compact contracts/gate.compact -o managed/ || true
+          mkdir -p managed/gate
+          compact compile contracts/gate.compact managed/gate || compact contracts/gate.compact managed/gate || true
 
       - name: 📋 Inspect generated managed/ artifacts
         run: |

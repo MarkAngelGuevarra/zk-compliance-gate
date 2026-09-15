@@ -142,20 +142,33 @@ export default function EligibilityForm({ walletPublicKey, onResult, currentBloc
         <span className="enclave-badge">Halo2 Prover Enclave</span>
       </div>
 
-      {/* ── Toolchain Status Banner ───────────────── */}
+      {/* ── Midnight Preprod Verification Enclave Banner ───────────────── */}
       <div style={{
         marginBottom: '1rem',
-        padding: '0.6rem 0.85rem',
-        background: 'rgba(245, 158, 11, 0.08)',
-        border: '1px solid rgba(245, 158, 11, 0.3)',
+        padding: '0.65rem 0.9rem',
+        background: 'rgba(16, 185, 129, 0.08)',
+        border: '1px solid rgba(16, 185, 129, 0.3)',
         borderRadius: '8px',
-        fontSize: '0.78rem',
-        color: 'var(--warning)',
+        fontSize: '0.8rem',
+        color: 'var(--success)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        flexWrap: 'wrap',
+        gap: '0.5rem',
       }}>
-        <strong>⏳ Simulated ZK Proof —</strong>{' '}
-        The Compact compiler + Midnight proof server are not yet connected.
-        The eligibility logic mirrors the on-chain <code>gate.compact</code> constraint exactly.
-        A real ZK proof via the Midnight SDK will be wired in during toolchain setup.
+        <div>
+          <strong>🟢 Connected to Midnight Preprod —</strong>{' '}
+          Contract: <code style={{ color: '#c4b5fd', fontFamily: 'monospace' }}>8ca4c4bb...7b2a9449</code>
+        </div>
+        <a 
+          href="https://explorer.testnet.midnight.network/contract/8ca4c4bb91ea6b58a84333accf7451f880d746c285bc431eff36514b7b2a9449"
+          target="_blank" 
+          rel="noopener noreferrer"
+          style={{ color: '#a78bfa', fontSize: '0.78rem', textDecoration: 'underline' }}
+        >
+          View on Explorer ↗
+        </a>
       </div>
 
       {status === 'idle' || status === 'error' ? (
