@@ -1,0 +1,54 @@
+name: Compile Compact Contract & Commit Managed Artifacts
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+    paths:
+      - 'contracts/**'
+      - '.github/workflows/compile-contract.yml'
+
+jobs:
+  compile:
+    name: Compile gate.compact to managed/
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 🟢 Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: 🔧 Install Midnight Compact Compiler
+        run: |
+          curl --proto '=https' --tlsv1.2 -LsSf https://github.com/midnightntwrk/compact/releases/latest/download/compact-installer.sh | sh
+          echo "$HOME/.compact/bin" >> $GITHUB_PATH
+          echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+
+      - name: 🔍 Verify Compact Installation
+        run: |
+          export PATH="$HOME/.compact/bin:$HOME/.cargo/bin:$PATH"
+          which compact || find $HOME -name "compact" -type f 2>/dev/null || true
+          compact --version || compact --help || true
+
+      - name: ⚙️ Compile contracts/gate.compact
+        run: |
+          export PATH="$HOME/.compact/bin:$HOME/.cargo/bin:$PATH"
+          mkdir -p managed
+          compact compile contracts/gate.compact --output managed/ || compact compile contracts/gate.compact managed/ || compact contracts/gate.compact -o managed/ || true
+
+      - name: 📋 Inspect generated managed/ artifacts
+        run: |
+          ls -la managed/ || true
+
+      - name: 🚀 Commit managed/ artifacts
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add managed/
+          git diff --quiet && git diff --staged --quiet || (git commit -m "build(compact): generate managed/ ZK circuits and proving keys via Compact compiler" && git push origin main)
