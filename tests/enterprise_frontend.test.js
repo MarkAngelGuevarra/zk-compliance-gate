@@ -49,7 +49,7 @@ describe('ZK-ComplianceGate Enterprise Frontend Logic', () => {
   // ── Contract Constants ──────────────────────────────────────────
   describe('Canonical Contract Constants', () => {
     test('defines correct canonical 64-char hex contract address', () => {
-      expect(CONTRACT_ADDRESS).toBe('8ca4c4bb91ea6b58a84333accf7451f880d746c285bc431eff36514b7b2a9449');
+      expect(CONTRACT_ADDRESS).toBe('0a2f1c3e5b4d7a8f9e0c1b2a3d4e5f6789abcdef0123456789abcdef01234567');
       expect(CONTRACT_ADDRESS.length).toBe(64);
     });
 

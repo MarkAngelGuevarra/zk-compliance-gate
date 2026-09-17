@@ -12,6 +12,7 @@ import {
   getProverTelemetryStages,
   generateAuditReceipt
 } from '../lib/compliance';
+import { CONTRACT_ADDRESS, truncateHash, EXPLORER_URL } from '../constants/contract';
 
 export default function EligibilityForm({ walletPublicKey, onResult, currentBlockHeight }) {
   const [selectedPresetId, setSelectedPresetId] = useState('AGE_18');
@@ -159,10 +160,10 @@ export default function EligibilityForm({ walletPublicKey, onResult, currentBloc
       }}>
         <div>
           <strong>🟢 Connected to Midnight Preprod —</strong>{' '}
-          Contract: <code style={{ color: '#c4b5fd', fontFamily: 'monospace' }}>8ca4c4bb...7b2a9449</code>
+          Contract: <code style={{ color: '#c4b5fd', fontFamily: 'monospace' }}>{truncateHash(CONTRACT_ADDRESS, 8, 6)}</code>
         </div>
         <a 
-          href="https://explorer.testnet.midnight.network/contract/8ca4c4bb91ea6b58a84333accf7451f880d746c285bc431eff36514b7b2a9449"
+          href={EXPLORER_URL}
           target="_blank" 
           rel="noopener noreferrer"
           style={{ color: '#a78bfa', fontSize: '0.78rem', textDecoration: 'underline' }}

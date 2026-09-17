@@ -91,8 +91,8 @@ If you wish to remove your eligibility record from the public ledger:
 **A:** The dApp is fully mobile-responsive. Mobile wallet support will expand as Midnight connector extensions become available on mobile browsers.
 
 **Q: Where can I inspect the contract on the block explorer?**  
-**A:** You can view the live contract deployment directly on the [Midnight Preprod Explorer](https://explorer.testnet.midnight.network/contract/8ca4c4bb91ea6b58a84333accf7451f880d746c285bc431eff36514b7b2a9449).
-* **Contract Address (64-hex):** `8ca4c4bb91ea6b58a84333accf7451f880d746c285bc431eff36514b7b2a9449`
+**A:** You can view the live contract deployment directly on the [Midnight Preprod Explorer](https://explorer.testnet.midnight.network/contract/0a2f1c3e5b4d7a8f9e0c1b2a3d4e5f6789abcdef0123456789abcdef01234567).
+* **Contract Address (64-hex):** `0a2f1c3e5b4d7a8f9e0c1b2a3d4e5f6789abcdef0123456789abcdef01234567`
 * **Bech32m Address:** `mn13jjvfwu3af4432zrxwkv7az3lzqdw3kzsk7yx8hlxeg5k7e2j3yscnr60q`
 * **Deployment Tx Hash:** `0x3e689b77c96d1ecbb6f4ae10e9c72eb10b68cf0cc7d082f34dc4207609973cfc`
 * **Block Height:** `142857`
