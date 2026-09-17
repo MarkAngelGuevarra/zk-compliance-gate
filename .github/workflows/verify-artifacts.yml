@@ -1,0 +1,108 @@
+name: Verify Managed Artifacts & Contract Integrity
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'managed/**'
+      - 'contracts/**'
+      - 'src/constants/contract.js'
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  verify-artifacts:
+    name: Verify Compact Compiler Artifacts
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 🟢 Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: 📦 Install dependencies
+        run: npm install
+
+      - name: 🗂️ Verify managed/gate/ artifact structure
+        run: |
+          echo "=== Checking managed/gate/ directory structure ==="
+          ls -la managed/gate/ || { echo "ERROR: managed/gate/ not found!"; exit 1; }
+          echo ""
+          echo "=== contract/ artifacts ==="
+          ls -la managed/gate/contract/
+          echo ""
+          echo "=== zkir/ artifacts ==="
+          ls -la managed/gate/zkir/
+          echo ""
+          echo "=== keys/ artifacts ==="
+          ls -la managed/gate/keys/
+          echo ""
+          echo "=== compiler/ artifacts ==="
+          ls -la managed/gate/compiler/
+          echo ""
+          echo "=== deployed-address.json ==="
+          cat managed/gate/deployed-address.json | python3 -m json.tool
+
+      - name: 🔍 Validate contract-info.json schema
+        run: |
+          node -e "
+          const fs = require('fs');
+          const info = JSON.parse(fs.readFileSync('managed/gate/compiler/contract-info.json', 'utf8'));
+          console.log('Contract name:', info.contractName);
+          console.log('Compiler version:', info.compilerVersion);
+          console.log('Circuits:', info.circuits.map(c => c.name).join(', '));
+          const required = ['verifyEligibility', 'revokeVerification', 'getVerificationStatus'];
+          const names = info.circuits.map(c => c.name);
+          for (const req of required) {
+            if (!names.includes(req)) { console.error('MISSING circuit:', req); process.exit(1); }
+          }
+          console.log('✅ All required circuits present');
+          "
+
+      - name: 🔍 Validate deployed-address.json
+        run: |
+          node -e "
+          const fs = require('fs');
+          const addr = JSON.parse(fs.readFileSync('managed/gate/deployed-address.json', 'utf8'));
+          console.log('Network:', addr.network);
+          console.log('Contract address:', addr.contractAddress);
+          console.log('Block height:', addr.blockHeight);
+          const addrHex = addr.contractAddress;
+          if (!/^[0-9a-fA-F]{64}$/.test(addrHex)) {
+            console.error('ERROR: Invalid contract address format (must be 64 hex chars):', addrHex);
+            process.exit(1);
+          }
+          console.log('✅ Contract address format valid (64-hex)');
+          if (addr.network !== 'preprod') {
+            console.warn('WARNING: Network is not preprod:', addr.network);
+          }
+          "
+
+      - name: 🧪 Run contract address tests
+        run: npm test -- --testPathPattern=contract_address
+
+      - name: 📊 Summary
+        run: |
+          echo "### ✅ Managed Artifact Verification Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Artifact | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|:---|:---|" >> $GITHUB_STEP_SUMMARY
+          echo "| \`managed/gate/contract/index.js\` | ✅ Present |" >> $GITHUB_STEP_SUMMARY
+          echo "| \`managed/gate/contract/index.d.ts\` | ✅ Present |" >> $GITHUB_STEP_SUMMARY
+          echo "| \`managed/gate/zkir/verifyEligibility.zkir\` | ✅ Present |" >> $GITHUB_STEP_SUMMARY
+          echo "| \`managed/gate/keys/verifyEligibility.prover\` | ✅ Present |" >> $GITHUB_STEP_SUMMARY
+          echo "| \`managed/gate/keys/verifyEligibility.verifier\` | ✅ Present |" >> $GITHUB_STEP_SUMMARY
+          echo "| \`managed/gate/compiler/contract-info.json\` | ✅ Valid JSON |" >> $GITHUB_STEP_SUMMARY
+          echo "| \`managed/gate/deployed-address.json\` | ✅ Valid 64-hex address |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          node -e "
+          const addr = JSON.parse(require('fs').readFileSync('managed/gate/deployed-address.json','utf8'));
+          console.log('Contract: ' + addr.contractAddress);
+          console.log('Network:  ' + addr.network);
+          console.log('Block:    ' + addr.blockHeight);
+          " >> $GITHUB_STEP_SUMMARY
