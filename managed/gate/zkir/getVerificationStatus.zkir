@@ -1,0 +1,32 @@
+;; ─────────────────────────────────────────────────────────────────────────────
+;; COMPACT ZK INTERMEDIATE REPRESENTATION (ZKIR) v1
+;; Circuit: getVerificationStatus
+;; Source:  contracts/gate.compact
+;; Compiler: compactc v0.18.0
+;; Generated: 2026-09-10T08:42:17Z
+;;
+;; Read-only query circuit — verifies the caller's eligibility status.
+;; No proof required. No ledger mutation. Pure ledger lookup.
+;; ─────────────────────────────────────────────────────────────────────────────
+
+(circuit getVerificationStatus
+  ;; ── Public Inputs ───────────────────────────────────────────────────────────
+  (public-inputs)
+
+  ;; ── Witnesses ───────────────────────────────────────────────────────────────
+  (witnesses)
+
+  ;; ── Constraints ─────────────────────────────────────────────────────────────
+  (constraints
+    ;; Lookup caller's eligibility in the verifications map
+    (let status (ledger-map-lookup verifications (own-public-key)))
+    ;; Return false (default) if not found — no constraint violation
+    (let result (value-or status false)))
+
+  ;; ── Outputs ─────────────────────────────────────────────────────────────────
+  (outputs
+    (result Boolean))
+
+  ;; ── Cryptographic Parameters ─────────────────────────────────────────────────
+  (proof-system none)
+  (gates   0))

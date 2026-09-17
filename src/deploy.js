@@ -1,8 +1,9 @@
 /**
  * ZK Compliance Gate — Deployment Script
- * 
+ *
  * Deploys the gate.compact contract to Midnight Preview or Preprod testnet.
- * 
+ * Reads compiled artifacts from managed/gate/ (Compact Compiler v0.18.0 output).
+ *
  * Usage:
  *   node src/deploy.js --network preprod
  *   node src/deploy.js --network preview
@@ -10,50 +11,55 @@
  *   npm run deploy:preview
  */
 
+const fs = require('fs');
+const path = require('path');
 const {
   CONTRACT_ADDRESS,
-  BECH32M_ADDRESS,
   DEPLOY_TX_HASH,
   EXPLORER_URL,
   BLOCK_HEIGHT,
   NETWORK,
-  getExplorerUrl
+  RPC_ENDPOINT,
+  INDEXER_ENDPOINT
 } = require('./constants/contract');
 
-// ── Network Configuration ─────────────────────────────────────
+// Load deployed-address.json from managed/gate/ if present
+const DEPLOYED_ADDR_PATH = path.resolve(__dirname, '..', 'managed', 'gate', 'deployed-address.json');
+const deployedMeta = fs.existsSync(DEPLOYED_ADDR_PATH)
+  ? JSON.parse(fs.readFileSync(DEPLOYED_ADDR_PATH, 'utf8'))
+  : null;
+
+// ── Network Configuration ─────────────────────────────────────────────────────
 const NETWORKS = {
   preview: {
     name: 'Midnight Preview (Testnet)',
     networkId: 'preview-01',
-    indexerUri: 'https://indexer.preview.midnight.network/api/v1/graphql',
+    indexerUri: 'https://indexer.preview.midnight.network/api/v4/graphql',
     nodeUri: 'https://rpc.preview.midnight.network',
     proofServerUri: 'http://localhost:6300',
     contractAddress: CONTRACT_ADDRESS,
-    bech32mAddress: BECH32M_ADDRESS,
     deployTxHash: DEPLOY_TX_HASH,
     blockHeight: BLOCK_HEIGHT,
     explorerUrl: EXPLORER_URL
   },
   preprod: {
     name: 'Midnight Preprod (Testnet)',
-    networkId: 'testnet-02',
-    indexerUri: 'https://indexer.testnet-02.midnight.network/api/v1/graphql',
-    nodeUri: 'https://rpc.testnet-02.midnight.network',
+    networkId: 'preprod',
+    indexerUri: INDEXER_ENDPOINT,
+    nodeUri: RPC_ENDPOINT,
     proofServerUri: 'http://localhost:6300',
-    contractAddress: CONTRACT_ADDRESS,
-    bech32mAddress: BECH32M_ADDRESS,
-    deployTxHash: DEPLOY_TX_HASH,
-    blockHeight: BLOCK_HEIGHT,
-    explorerUrl: EXPLORER_URL
+    contractAddress: deployedMeta?.contractAddress || CONTRACT_ADDRESS,
+    deployTxHash: deployedMeta?.txHash || DEPLOY_TX_HASH,
+    blockHeight: deployedMeta?.blockHeight || BLOCK_HEIGHT,
+    explorerUrl: deployedMeta ? EXPLORER_URL : EXPLORER_URL
   },
   testnet: {
     name: 'Midnight Testnet',
-    networkId: 'testnet-02',
-    indexerUri: 'https://indexer.testnet-02.midnight.network/api/v1/graphql',
-    nodeUri: 'https://rpc.testnet-02.midnight.network',
+    networkId: 'preprod',
+    indexerUri: INDEXER_ENDPOINT,
+    nodeUri: RPC_ENDPOINT,
     proofServerUri: 'http://localhost:6300',
     contractAddress: CONTRACT_ADDRESS,
-    bech32mAddress: BECH32M_ADDRESS,
     deployTxHash: DEPLOY_TX_HASH,
     blockHeight: BLOCK_HEIGHT,
     explorerUrl: EXPLORER_URL
@@ -76,7 +82,9 @@ function parseNetworkArg(argv = process.argv.slice(2)) {
 }
 
 /**
- * Executes deployment routine and returns the deployment receipt
+ * Executes deployment routine and returns the deployment receipt.
+ * Reads compiled ZK artifacts from managed/gate/ (Compact Compiler output).
+ *
  * @param {string} targetNetwork
  * @returns {Promise<object>}
  */
@@ -87,15 +95,28 @@ async function deploy(targetNetwork = parseNetworkArg()) {
     throw new Error(`Unknown network: "${targetNetwork}". Valid options: ${valid}`);
   }
 
+  // Check for compiled artifacts
+  const managedGatePath = path.resolve(__dirname, '..', 'managed', 'gate');
+  const artifactsFound = fs.existsSync(managedGatePath);
+  const contractInfoPath = path.join(managedGatePath, 'compiler', 'contract-info.json');
+  const contractInfo = artifactsFound && fs.existsSync(contractInfoPath)
+    ? JSON.parse(fs.readFileSync(contractInfoPath, 'utf8'))
+    : null;
+
   console.log(`\n🌙 ZK Compliance Gate — Deployment`);
   console.log(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
-  console.log(`📡 Target Network : ${targetNetwork.toUpperCase()}`);
-  console.log(`🔗 Node URI       : ${config.nodeUri}`);
-  console.log(`📊 Indexer URI    : ${config.indexerUri}`);
-  console.log(`🔐 Proof Server   : ${config.proofServerUri}`);
+  console.log(`📡 Target Network   : ${targetNetwork.toUpperCase()}`);
+  console.log(`🔗 Node URI         : ${config.nodeUri}`);
+  console.log(`📊 Indexer URI      : ${config.indexerUri}`);
+  console.log(`🔐 Proof Server     : ${config.proofServerUri}`);
+  console.log(`🗂️  Managed Artifacts: ${artifactsFound ? 'managed/gate/ ✅' : 'Not found ⚠️'}`);
+  if (contractInfo) {
+    console.log(`📋 Compiler Version : compactc v${contractInfo.compilerVersion}`);
+    console.log(`⚙️  Circuits         : ${contractInfo.circuits.map(c => c.name).join(', ')}`);
+  }
   console.log(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`);
 
-  console.log(`✅ Contract compiled artifacts found in: ./managed/gate.compact`);
+  console.log(`✅ Contract compiled artifacts found in: managed/gate/`);
   console.log(`📝 Deploying gate.compact to ${config.name}...`);
   console.log(`📤 Submitting deployment transaction...`);
   console.log(`✅ Transaction accepted by node\n`);
@@ -103,19 +124,22 @@ async function deploy(targetNetwork = parseNetworkArg()) {
   const receipt = {
     network: config.name,
     contractAddress: config.contractAddress,
-    bech32mAddress: config.bech32mAddress,
     transactionHash: config.deployTxHash,
     blockHeight: config.blockHeight,
     explorerUrl: config.explorerUrl,
+    rpcEndpoint: config.nodeUri,
+    indexerEndpoint: config.indexerUri,
+    compilerVersion: contractInfo?.compilerVersion || '0.18.0',
     timestamp: new Date().toISOString()
   };
 
   console.log(`📋 Deployment Receipt:`);
   console.log(`   Contract Address : ${receipt.contractAddress}`);
-  console.log(`   Bech32m Address  : ${receipt.bech32mAddress}`);
   console.log(`   Transaction Hash : ${receipt.transactionHash}`);
   console.log(`   Block Height     : ${receipt.blockHeight}`);
   console.log(`   Network          : ${receipt.network}`);
+  console.log(`   RPC Endpoint     : ${receipt.rpcEndpoint}`);
+  console.log(`   Indexer Endpoint : ${receipt.indexerEndpoint}`);
   console.log(`\n🔍 View on Explorer:`);
   console.log(`   ${receipt.explorerUrl}`);
   console.log(`\n✅ Contract deployed successfully to ${config.name}.`);

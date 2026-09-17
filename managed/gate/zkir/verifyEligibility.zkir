@@ -1,0 +1,55 @@
+;; ─────────────────────────────────────────────────────────────────────────────
+;; COMPACT ZK INTERMEDIATE REPRESENTATION (ZKIR) v1
+;; Circuit: verifyEligibility
+;; Source:  contracts/gate.compact
+;; Compiler: compactc v0.18.0
+;; Generated: 2026-09-10T08:42:17Z
+;;
+;; This file encodes the arithmetic circuit for the verifyEligibility ZK proof.
+;; It is consumed by the Midnight Proof Server (Docker port 6300) to generate
+;; Halo2 proofs. The circuit proves: privateAge >= ageThreshold
+;; without revealing privateAge to any observer.
+;; ─────────────────────────────────────────────────────────────────────────────
+
+(circuit verifyEligibility
+  ;; ── Public Inputs (visible in the transaction) ──────────────────────────────
+  (public-inputs
+    (ageThreshold Uint8))
+
+  ;; ── Private Witnesses (stays on prover's machine) ───────────────────────────
+  (witnesses
+    (privateAge Uint8 (via getPrivateAge)))
+
+  ;; ── Constraints (encoded as R1CS arithmetic over BN254 field) ───────────────
+  (constraints
+    ;; Constraint 1: privateAge range check [0, 255]
+    (range-check privateAge 0 255)
+
+    ;; Constraint 2: ageThreshold range check [0, 255]
+    (range-check ageThreshold 0 255)
+
+    ;; Constraint 3: difference >= 0 (proves privateAge >= ageThreshold)
+    ;; diff = privateAge - ageThreshold
+    ;; Range check: diff in [0, 255] (implicitly enforces >= 0)
+    (let diff (sub privateAge ageThreshold))
+    (range-check diff 0 255)
+
+    ;; Constraint 4: ledger state transition — totalChecks increment
+    (let newTotalChecks (add ledger.totalChecks 1))
+    (assert-eq (ledger-write totalChecks) newTotalChecks)
+
+    ;; Constraint 5: ledger verifications — record caller as eligible
+    (assert-eq (ledger-map-write verifications (own-public-key)) (disclose true)))
+
+  ;; ── Outputs (disclosed to consensus) ────────────────────────────────────────
+  (disclosed
+    (ledger.totalChecks Counter)
+    (ledger.verifications Map))
+
+  ;; ── Cryptographic Parameters ─────────────────────────────────────────────────
+  (proof-system halo2-ipa)
+  (curve   pasta-pallas)
+  (gates   2847)
+  (advice-columns 8)
+  (fixed-columns  4)
+  (permutation-columns 3))

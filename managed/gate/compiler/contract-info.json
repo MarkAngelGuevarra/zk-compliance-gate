@@ -1,0 +1,50 @@
+{
+  "format": "contract-info",
+  "version": "1",
+  "compilerVersion": "0.18.0",
+  "languageVersion": "0.14.0",
+  "contractName": "gate",
+  "sourceFile": "contracts/gate.compact",
+  "compiledAt": "2026-09-10T08:42:17Z",
+  "circuits": [
+    {
+      "name": "verifyEligibility",
+      "type": "state_mutating",
+      "publicInputs": [
+        { "name": "ageThreshold", "type": "Uint<8>" }
+      ],
+      "witnesses": [
+        { "name": "getPrivateAge", "returnType": "Uint<8>", "visibility": "private" }
+      ],
+      "outputs": [],
+      "modifiesLedger": true,
+      "zkProofRequired": true
+    },
+    {
+      "name": "revokeVerification",
+      "type": "state_mutating",
+      "publicInputs": [],
+      "witnesses": [],
+      "outputs": [],
+      "modifiesLedger": true,
+      "zkProofRequired": false
+    },
+    {
+      "name": "getVerificationStatus",
+      "type": "query",
+      "publicInputs": [],
+      "witnesses": [],
+      "outputs": [
+        { "type": "Boolean" }
+      ],
+      "modifiesLedger": false,
+      "zkProofRequired": false
+    }
+  ],
+  "ledger": {
+    "fields": [
+      { "name": "totalChecks", "type": "Counter" },
+      { "name": "verifications", "type": "Map<ZswapCoinPublicKey, Boolean>" }
+    ]
+  }
+}
