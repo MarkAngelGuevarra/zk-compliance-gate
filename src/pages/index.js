@@ -1,6 +1,7 @@
 /**
  * pages/index.js — ZK Compliance Gate Enterprise Dashboard
  * Institutional Zero-Knowledge Compliance Dashboard for Midnight Network
+ * Levels 1–6: New Moon to Full (Supermoon)
  */
 
 import React, { useState } from 'react';
@@ -14,11 +15,14 @@ import ResultCard from '../components/ResultCard';
 import LedgerExplorer from '../components/LedgerExplorer';
 import DeveloperSDK from '../components/DeveloperSDK';
 import AuditTrail from '../components/AuditTrail';
+import TesterHub from '../components/TesterHub';
+import UserLeaderboard from '../components/UserLeaderboard';
+import MainnetRoadmap from '../components/MainnetRoadmap';
 import { createInitialLedgerState, recordLedgerVerification } from '../lib/ledger';
 import { EXPLORER_URL, CONTRACT_ADDRESS } from '../constants/contract';
 
 export default function Home() {
-  const [activeTab, setActiveTab] = useState('gate'); // 'gate' | 'ledger' | 'sdk' | 'audit'
+  const [activeTab, setActiveTab] = useState('gate'); // 'gate' | 'ledger' | 'sdk' | 'audit' | 'community' | 'mainnet'
   const [wallet, setWallet] = useState(null);
   const [result, setResult] = useState(null);
   const [ledgerState, setLedgerState] = useState(createInitialLedgerState);
@@ -50,12 +54,15 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>ZK-ComplianceGate — Enterprise Zero-Knowledge Compliance on Midnight</title>
+        <title>ZK-ComplianceGate — Zero-Knowledge Compliance on Midnight Network</title>
         <meta
           name="description"
           content="Institutional zero-knowledge compliance dashboard on Midnight Network. Prove regulatory eligibility without disclosing private credentials."
         />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta property="og:title" content="ZK-ComplianceGate" />
+        <meta property="og:description" content="Privacy-preserving regulatory compliance on Midnight Network" />
+        <meta property="og:url" content="https://zk-compliance-gate.vercel.app" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
@@ -67,7 +74,9 @@ export default function Home() {
         <header className="dashboard-header">
           <div className="brand-identity-group">
             <div className="brand-logo-badge">
-              <span className="brand-moon-glyph">🌙</span>
+              {/* Custom ZK-Gate brand logo */}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/logo.svg" alt="ZK Compliance Gate Logo" width="48" height="48" />
               <span className="brand-zk-tag">ZK-GATE</span>
             </div>
             <div>
@@ -107,7 +116,7 @@ export default function Home() {
                 </p>
               </div>
 
-              {/* Side-by-Side Dual-Pane Cryptographic Audit Receipt (Visible upon verification) */}
+              {/* Side-by-Side Dual-Pane Cryptographic Audit Receipt */}
               {result && (
                 <ResultCard
                   result={result}
@@ -144,6 +153,21 @@ export default function Home() {
               <AuditTrail latestReceipt={result} />
             </div>
           )}
+
+          {activeTab === 'community' && (
+            <div className="workspace-tab-panel">
+              <TesterHub ledgerState={ledgerState} onSwitchTab={setActiveTab} />
+              <div style={{ marginTop: '2rem' }}>
+                <UserLeaderboard ledgerState={ledgerState} />
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'mainnet' && (
+            <div className="workspace-tab-panel">
+              <MainnetRoadmap commitCount={30} />
+            </div>
+          )}
         </div>
 
         {/* Enterprise Institutional Footer */}
@@ -162,8 +186,8 @@ export default function Home() {
                 <a href={EXPLORER_URL} target="_blank" rel="noopener noreferrer">
                   Midnight Preprod Contract ↗
                 </a>
-                <a href="https://explorer.testnet.midnight.network" target="_blank" rel="noopener noreferrer">
-                  Testnet Block Explorer ↗
+                <a href="https://midnight.network/explorer" target="_blank" rel="noopener noreferrer">
+                  Block Explorer ↗
                 </a>
                 <a href="https://docs.midnight.network" target="_blank" rel="noopener noreferrer">
                   Midnight Documentation ↗
@@ -175,8 +199,8 @@ export default function Home() {
                 <a href="https://github.com/MarkAngelGuevarra/zk-compliance-gate" target="_blank" rel="noopener noreferrer">
                   GitHub Repository ↗
                 </a>
-                <a href="https://midnight.network" target="_blank" rel="noopener noreferrer">
-                  Midnight Network Official ↗
+                <a href="https://x.com/ZKComplianceGate" target="_blank" rel="noopener noreferrer">
+                  @ZKComplianceGate on X ↗
                 </a>
                 <span className="footer-contract-text font-mono">
                   Contract: {CONTRACT_ADDRESS.slice(0, 10)}...{CONTRACT_ADDRESS.slice(-8)}

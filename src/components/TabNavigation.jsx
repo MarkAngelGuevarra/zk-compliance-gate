@@ -37,6 +37,22 @@ export const TABS = [
     badge: 'Halo2',
     icon: '🔍',
     description: 'Circuit constraints, VK verifier, and formal privacy proofs'
+  },
+  {
+    id: 'community',
+    label: 'Community Hub',
+    shortLabel: 'Users',
+    badge: 'Level 5',
+    icon: '🌕',
+    description: 'Recruit Preprod testers — track progress toward 50 on-chain users'
+  },
+  {
+    id: 'mainnet',
+    label: 'Mainnet Roadmap',
+    shortLabel: 'Mainnet',
+    badge: 'Level 6',
+    icon: '🌟',
+    description: 'Midnight Mainnet deployment status and Supermoon progress'
   }
 ];
 
