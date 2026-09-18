@@ -163,12 +163,12 @@ export default function EligibilityForm({ walletPublicKey, onResult, currentBloc
           Contract: <code style={{ color: '#c4b5fd', fontFamily: 'monospace' }}>{truncateHash(CONTRACT_ADDRESS, 8, 6)}</code>
         </div>
         <a 
-          href={EXPLORER_URL}
+          href="https://github.com/MarkAngelGuevarra/zk-compliance-gate/blob/main/managed/gate/deployed-address.json"
           target="_blank" 
           rel="noopener noreferrer"
           style={{ color: '#a78bfa', fontSize: '0.78rem', textDecoration: 'underline' }}
         >
-          View on Explorer ↗
+          View Deployment Receipt ↗
         </a>
       </div>
 

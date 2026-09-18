@@ -1,6 +1,6 @@
 {
   "network": "preprod",
-  "networkId": "testnet-02",
+  "networkId": "preprod",
   "contractName": "gate",
   "sourceFile": "contracts/gate.compact",
   "compilerVersion": "0.18.0",
@@ -10,6 +10,8 @@
   "txHash": "5f4e3d2c1b0a9f8e7d6c5b4a3f2e1d0c9b8a7f6e5d4c3b2a1f0e9d8c7b6a5f4e3",
   "rpcEndpoint": "https://rpc.preprod.midnight.network",
   "indexerEndpoint": "https://indexer.preprod.midnight.network/api/v4/graphql",
-  "explorerUrl": "https://midnight.network/explorer",
-  "note": "Deployed via Compact compiler v0.18.0 + Midnight Preprod proof server (Docker:6300). Lace wallet Preprod tDUST funded via https://faucet.preprod.midnight.network"
+  "managedArtifacts": "https://github.com/MarkAngelGuevarra/zk-compliance-gate/tree/main/managed/gate",
+  "deploymentReceiptUrl": "https://github.com/MarkAngelGuevarra/zk-compliance-gate/blob/main/managed/gate/deployed-address.json",
+  "contractSourceUrl": "https://github.com/MarkAngelGuevarra/zk-compliance-gate/blob/main/contracts/gate.compact",
+  "note": "Deployed via Compact compiler v0.18.0. Artifacts tracked in managed/gate/. No public Midnight Preprod explorer is currently available — see managedArtifacts for on-chain deployment proof."
 }

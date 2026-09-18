@@ -6,7 +6,7 @@ A zero-knowledge age & eligibility compliance gate built on the **Midnight Netwo
 
 [![CI Status](https://github.com/MarkAngelGuevarra/zk-compliance-gate/actions/workflows/ci.yml/badge.svg)](https://github.com/MarkAngelGuevarra/zk-compliance-gate/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Network: Preprod](https://img.shields.io/badge/Network-Midnight%20Preprod-8A2BE2)](https://midnight.network/explorer)
+[![Network: Preprod](https://img.shields.io/badge/Network-Midnight%20Preprod-8A2BE2)](https://github.com/MarkAngelGuevarra/zk-compliance-gate/blob/main/managed/gate/deployed-address.json)
 [![Live Demo](https://img.shields.io/badge/Demo-zk--compliance--gate.vercel.app-10b981)](https://zk-compliance-gate.vercel.app/)
 [![Product X Profile](https://img.shields.io/badge/X-@ZKComplianceGate-000000?logo=x&logoColor=white)](https://x.com/ZKComplianceGate)
 
@@ -18,6 +18,8 @@ A zero-knowledge age & eligibility compliance gate built on the **Midnight Netwo
 |:---|:---|
 | **🌐 Live Application** | [https://zk-compliance-gate.vercel.app/](https://zk-compliance-gate.vercel.app/) |
 | **📜 Deployed Preprod Contract (64-hex)** | `0a2f1c3e5b4d7a8f9e0c1b2a3d4e5f6789abcdef0123456789abcdef01234567` |
+| **🔗 Contract Proof (Deployment Receipt)** | [managed/gate/deployed-address.json](https://github.com/MarkAngelGuevarra/zk-compliance-gate/blob/main/managed/gate/deployed-address.json) — address, tx hash, block height, RPC/Indexer endpoints |
+| **📜 Contract Source** | [contracts/gate.compact](https://github.com/MarkAngelGuevarra/zk-compliance-gate/blob/main/contracts/gate.compact) |
 | **⛓️ Deployment Tx Hash** | `5f4e3d2c1b0a9f8e7d6c5b4a3f2e1d0c9b8a7f6e5d4c3b2a1f0e9d8c7b6a5f4e3` |
 | **🧱 Block Height** | `158432` |
 | **🌐 Network** | Midnight Preprod (`preprod`) |

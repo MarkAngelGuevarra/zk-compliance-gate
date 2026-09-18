@@ -182,12 +182,12 @@ export default function Home() {
 
             <div className="footer-links-group">
               <div className="footer-links-col">
-                <span className="footer-col-title">Network &amp; Explorer</span>
-                <a href={EXPLORER_URL} target="_blank" rel="noopener noreferrer">
-                  Midnight Preprod Contract ↗
+                <span className="footer-col-title">Contract &amp; Deployment</span>
+                <a href="https://github.com/MarkAngelGuevarra/zk-compliance-gate/blob/main/managed/gate/deployed-address.json" target="_blank" rel="noopener noreferrer">
+                  Deployment Receipt ↗
                 </a>
-                <a href="https://midnight.network/explorer" target="_blank" rel="noopener noreferrer">
-                  Block Explorer ↗
+                <a href="https://github.com/MarkAngelGuevarra/zk-compliance-gate/tree/main/managed/gate" target="_blank" rel="noopener noreferrer">
+                  Managed Artifacts ↗
                 </a>
                 <a href="https://docs.midnight.network" target="_blank" rel="noopener noreferrer">
                   Midnight Documentation ↗
