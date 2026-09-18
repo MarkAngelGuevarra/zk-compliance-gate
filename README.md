@@ -1,12 +1,12 @@
 # 🌙 ZK Compliance Gate
 
-> **New Moon to Full: Monthly Moonshots on Midnight — Institutional Compliance Suite (Level 4: Waxing Gibbous)**
+> **New Moon to Full: Monthly Moonshots on Midnight — Institutional Compliance Suite (Levels 1–6)**
 
 A zero-knowledge age & eligibility compliance gate built on the **Midnight Network** using **Compact** smart contracts. Prove you meet regulatory compliance thresholds (age, investor accreditation, or jurisdiction) — **without ever revealing your private data to anyone**.
 
 [![CI Status](https://github.com/MarkAngelGuevarra/zk-compliance-gate/actions/workflows/ci.yml/badge.svg)](https://github.com/MarkAngelGuevarra/zk-compliance-gate/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Network: Preprod](https://img.shields.io/badge/Network-Midnight%20Preprod-8A2BE2)](https://explorer.testnet.midnight.network/contract/0a2f1c3e5b4d7a8f9e0c1b2a3d4e5f6789abcdef0123456789abcdef01234567)
+[![Network: Preprod](https://img.shields.io/badge/Network-Midnight%20Preprod-8A2BE2)](https://midnight.network/explorer)
 [![Live Demo](https://img.shields.io/badge/Demo-zk--compliance--gate.vercel.app-10b981)](https://zk-compliance-gate.vercel.app/)
 [![Product X Profile](https://img.shields.io/badge/X-@ZKComplianceGate-000000?logo=x&logoColor=white)](https://x.com/ZKComplianceGate)
 
@@ -23,16 +23,20 @@ A zero-knowledge age & eligibility compliance gate built on the **Midnight Netwo
 | **🌐 Network** | Midnight Preprod (`preprod`) |
 | **🔗 RPC Endpoint** | `https://rpc.preprod.midnight.network` |
 | **📊 Indexer Endpoint** | `https://indexer.preprod.midnight.network/api/v4/graphql` |
-| **🗂️ Managed Artifacts** | [`managed/gate/`](managed/gate/) — Compact compiler output: `contract/`, `zkir/`, `keys/`, `compiler/` |
+| **🗂️ Managed Artifacts** | [`managed/gate/`](managed/gate/) — Compact v0.18.0 output: `contract/`, `zkir/`, `keys/`, `compiler/` |
 | **🎥 Demo Video Walkthrough** | [Watch Demo Video Walkthrough](https://zk-compliance-gate.vercel.app/) *(Wallet connect + ZK circuit execution)* |
-| **🐦 Product Profile on X** | [@ZKComplianceGate](https://x.com/ZKComplianceGate) |
-| **⚙️ CI/CD Pipeline** | Passing automated GitHub Actions workflow with unit tests & Next.js production build [![CI Status](https://github.com/MarkAngelGuevarra/zk-compliance-gate/actions/workflows/ci.yml/badge.svg)](https://github.com/MarkAngelGuevarra/zk-compliance-gate/actions) |
-| **🔐 Documented Privacy Claim** | In Compact, `privateAge` is declared as a `witness getPrivateAge(): Uint<8>` callback. The witness is invoked **locally on the prover's device** and consumed inside the ZK circuit. Only the boolean `eligible: true/false` and the caller's `ZswapCoinPublicKey` are disclosed to the public ledger. Observers learn nothing about the user's actual age or underlying credentials. |
-| **📦 Commit History** | 25+ meaningful commits on `main` branch (September 2026) |
+| **🐦 Product Profile on X** | [@ZKComplianceGate](https://x.com/ZKComplianceGate) — Linked in README badge |
+| **⚙️ CI/CD Pipeline** | 3 GitHub Actions workflows: CI tests, Compact compile, Artifact verify [![CI Status](https://github.com/MarkAngelGuevarra/zk-compliance-gate/actions/workflows/ci.yml/badge.svg)](https://github.com/MarkAngelGuevarra/zk-compliance-gate/actions) |
+| **🔐 Documented Privacy Claim** | `witness getPrivateAge(): Uint<8>` — invoked locally on prover's device; only boolean `eligible` and `ZswapCoinPublicKey` disclosed on-chain. See [SECURITY.md](SECURITY.md) |
+| **📦 Commit History** | **30+ meaningful commits** on `main` branch (September 2026) — see [commits](https://github.com/MarkAngelGuevarra/zk-compliance-gate/commits/main) |
+| **📋 CI/CD Guide** | [docs/CICD_GUIDE.md](docs/CICD_GUIDE.md) — 3 workflows, Vercel env vars, local dev |
+| **⚡ Power Start Guide** | [docs/POWER_START.md](docs/POWER_START.md) — 10-minute Lace + Preprod onboarding |
+| **🌕 Level 5 — Full Moon** | Community Hub tab with Tester Recruitment (→ 50 Preprod users goal) |
+| **🌟 Level 6 — Supermoon** | Mainnet Roadmap tab: deployment checklist, Docker proof server, 30+ commits |
 
 ---
 
-## 🖥️ Enterprise Web3 Multi-Tab Dashboard
+## 🖥️ Enterprise Web3 Dashboard — 6 Tabs
 
 ZK Compliance Gate features an institutional-grade Web3 dashboard styled with a Midnight dark glassmorphic design system (`#7c3aed`, `#a78bfa`, `backdrop-filter: blur(16px)`):
 
