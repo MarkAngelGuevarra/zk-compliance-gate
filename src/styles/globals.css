@@ -219,34 +219,44 @@ html, body {
 
 .brand-logo-badge {
   position: relative;
-  width: 52px;
-  height: 52px;
-  background: linear-gradient(135deg, rgba(124, 58, 237, 0.4), rgba(167, 139, 250, 0.15));
-  border: 1px solid var(--glass-border-hover);
+  width: 64px;
+  height: 64px;
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.25), rgba(16, 185, 129, 0.1));
+  border: 1.5px solid rgba(124, 58, 237, 0.5);
   border-radius: var(--radius-lg);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: var(--glass-glow);
+  box-shadow: 0 0 24px rgba(124,58,237,0.3), 0 4px 20px rgba(0,0,0,0.4);
+  overflow: visible;
+  flex-shrink: 0;
+}
+
+.brand-logo-badge img,
+.brand-logo-badge svg {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
 }
 
 .brand-moon-glyph {
-  font-size: 1.75rem;
+  font-size: 2rem;
   filter: drop-shadow(0 0 10px rgba(167, 139, 250, 0.6));
 }
 
 .brand-zk-tag {
   position: absolute;
-  bottom: -6px;
-  right: -6px;
-  background: var(--accent-purple);
+  bottom: -8px;
+  right: -8px;
+  background: linear-gradient(135deg, var(--accent-purple), #10b981);
   color: white;
-  font-size: 0.55rem;
-  font-weight: 800;
-  padding: 0.1rem 0.35rem;
+  font-size: 0.5rem;
+  font-weight: 900;
+  padding: 0.15rem 0.4rem;
   border-radius: 4px;
-  letter-spacing: 0.05em;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+  letter-spacing: 0.08em;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  white-space: nowrap;
 }
 
 .brand-title {
